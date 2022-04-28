@@ -26,3 +26,6 @@ replay_pid*
 # IDE
 .idea
 .vscode
+
+# Build folder
+/target
