@@ -16,7 +16,7 @@ test:
   tags:
     - pppp
   script:
-    - mvn surefire:test
+    - mvn test
   artifacts:
     when: always
     reports:
