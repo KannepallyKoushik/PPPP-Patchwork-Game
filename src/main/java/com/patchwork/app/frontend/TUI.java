@@ -8,8 +8,8 @@ import com.patchwork.app.utils.ConsoleColor;
 import java.util.List;
 
 public class TUI {
-    // TODO: Get tests to pass with Unicode SPACE_CHAR \u (Black Large Square)
-    //public static char SPACE_CHAR = '\u2B1B'; // Unicode Black Large Square
+    // TODO: Get tests to pass with Unicode SPACE_CHAR \ u2B1B (Black Large Square)
+    //public static char SPACE_CHAR = '\ u2B1B'; // Unicode Black Large Square
     public static char SPACE_CHAR = 'X';
 
     public Game game;
