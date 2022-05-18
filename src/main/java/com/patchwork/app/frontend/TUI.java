@@ -25,8 +25,7 @@ public class TUI {
     public void drawQuiltBoard(QuiltBoard quiltBoard) {
         for(List<Boolean> row : quiltBoard.spaces) {
             for(Boolean boardSpace : row) {
-                System.out.print(boardSpace ? ConsoleColor.BLUE : ConsoleColor.WHITE);
-                System.out.print(SPACE_CHAR + " ");
+                this.drawQuiltboardSpace(boardSpace, false);
             }
             System.out.println();
         }
@@ -49,14 +48,18 @@ public class TUI {
                     patchSpace = patch.spaces.get(r-patchY).get(c-patchX);
                 }
 
-                if(boardSpace) {
-                    System.out.print(patchSpace ? ConsoleColor.RED : ConsoleColor.BLUE);
-                } else {
-                    System.out.print(patchSpace ? ConsoleColor.GREEN : ConsoleColor.WHITE);
-                }
-                System.out.print(SPACE_CHAR + " ");
+                this.drawQuiltboardSpace(boardSpace, patchSpace);
             }
             System.out.println();
         }
+    }
+
+    private void drawQuiltboardSpace(boolean hasPatch, boolean placingPatch) {
+        if(hasPatch) {
+            System.out.print(placingPatch ? ConsoleColor.RED : ConsoleColor.BLUE);
+        } else {
+            System.out.print(placingPatch ? ConsoleColor.GREEN : ConsoleColor.WHITE);
+        }
+        System.out.print(SPACE_CHAR + " ");
     }
 }
