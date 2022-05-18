@@ -6,9 +6,9 @@ import java.util.Map;
 
 public class TimeBoard {
 
-    private List<List<SpaceElement>> spaces;
-    private List<Player> players;
-    private Map<Player, Integer> playerPositions;
+    public List<List<SpaceElement>> spaces;
+    public List<Player> players;
+    public Map<Player, Integer> playerPositions;
 
     public TimeBoard(List<Player> players) {
         this.spaces = new ArrayList<>();
@@ -18,13 +18,13 @@ public class TimeBoard {
         this.players = players;
     }
 
-    private enum SpaceElementType {
+    public enum SpaceElementType {
         BUTTON,
         PATCH,
         PLAYER
     }
 
-    private class SpaceElement {
+    public class SpaceElement {
 
         public SpaceElementType type;
         public Player player;
