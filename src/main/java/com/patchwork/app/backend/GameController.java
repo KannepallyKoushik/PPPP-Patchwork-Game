@@ -1,5 +1,9 @@
 package com.patchwork.app.backend;
 
+import com.patchwork.app.backend.GameStates.GameState;
+import com.patchwork.app.backend.GameStates.PickMove;
+import com.patchwork.app.backend.GameStates.PickPatch;
+import com.patchwork.app.backend.Inputs.GameInput;
 import com.patchwork.app.backend.Mock.Scanners;
 import com.patchwork.app.backend.Mock.RealScanner;
 import com.patchwork.app.frontend.TUI;
@@ -17,17 +21,19 @@ public class GameController {
 
     //realScanner is an actual System.in scanner, as opposed to a mock scanner used in the tests
     //Hopefully this will be gone when gameInput & states is working
-    public Scanners scanner;
+    public GameInput scanner;
+
+    public Move move;
 
     // TODO Currently not working due to missing implementation
     //    public GameInput input;
-    //    public GameState currentState;
+        public GameState currentState;
 
     public GameController(){
         this.game = new Game();
         this.textUI = new TUI(game);
         this.currentPlayer = game.players.get(new Random().nextInt(game.players.size()));
-        this.scanner = new RealScanner(new Scanner(System.in));
+        this.scanner = new GameInput(new Scanner(System.in));
     }
 
     public void run() throws GameException {
@@ -38,6 +44,7 @@ public class GameController {
         //Start game loop
         while (!isFinished) {
 
+//            currentState = new PickMove(currentPlayer, game.);
 
             //Let TUI draw necessary components before picking move
             textUI.drawTimeBoard();
@@ -57,7 +64,7 @@ public class GameController {
             } else if (next.equals("BUY")) {
                 //First draw some useful components for picking a patch
                 //Implement state drawing later when this is implemented in TUI
-                //currentState = new PickPatch(currentPlayer, game.patchList.getAvailablePatches(), game.patchList.getAvailablePatches().get(0));
+                currentState = new PickPatch(currentPlayer, game.patchList.getAvailablePatches(), game.patchList.getAvailablePatches().get(0));
                 textUI.drawQuiltBoard(currentPlayer.quiltBoard);
                 textUI.drawPatches();
                 System.out.println("Please choose your patch, with numbers 1-3");
@@ -216,5 +223,14 @@ public class GameController {
                     break;
             }
         }
+    }
+
+
+    public void update(Move move){
+        this.move = move;
+    }
+
+    public GameState getState(){
+        return currentState;
     }
 }
