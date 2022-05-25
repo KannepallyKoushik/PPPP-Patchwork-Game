@@ -30,9 +30,15 @@ public class TUI {
     }
 
     public void drawQuiltBoard(QuiltBoard quiltBoard) {
-        for(List<Boolean> row : quiltBoard.spaces) {
-            for(Boolean boardSpace : row) {
-                this.drawQuiltBoardSpace(boardSpace, false);
+//        for(List<Boolean> row : quiltBoard.spaces) {
+//            for(Boolean boardSpace : row) {
+//                this.drawQuiltBoardSpace(boardSpace, false);
+//            }
+//            System.out.println();
+//        }
+        for(int i=0; i < quiltBoard.spaces.length;i++){
+            for(int j=0; j < quiltBoard.spaces[i].length;j++){
+                this.drawQuiltBoardSpace(quiltBoard.spaces[i][j],false);
             }
             System.out.println();
         }
@@ -40,10 +46,25 @@ public class TUI {
 
     // patchX and patchY are the coordinates from the top-left of the board
     public void drawQuiltBoardWithPatch(QuiltBoard quiltBoard, Patch patch, int patchX, int patchY) {
-        for(int r = 0; r < quiltBoard.spaces.size(); r++) {
-            List<Boolean> row = quiltBoard.spaces.get(r);
-            for(int c = 0; c < row.size(); c++) {
-                Boolean boardSpace = row.get(c);
+        for(int r = 0; r < quiltBoard.spaces.length; r++) {
+//            List<Boolean> row = quiltBoard.spaces.get(r);
+//            for(int c = 0; c < row.size(); c++) {
+//                Boolean boardSpace = row.get(c);
+//                Boolean patchSpace = false;
+//
+//                // Check if current space is within bounds of the patch
+//                if(r-patchY >= 0 &&
+//                        r-patchY < patch.spaces.size() &&
+//                        c-patchX >= 0 &&
+//                        c-patchX < patch.spaces.get(r-patchY).size()) {
+//                    // Check the state of this space of the patch
+//                    patchSpace = patch.spaces.get(r-patchY).get(c-patchX);
+//                }
+//
+//                this.drawQuiltBoardSpace(boardSpace, patchSpace);
+//            }
+            for(int c = 0; c < quiltBoard.spaces[r].length ; c++){
+                Boolean boardSpace = quiltBoard.spaces[r][c];
                 Boolean patchSpace = false;
 
                 // Check if current space is within bounds of the patch
@@ -54,7 +75,6 @@ public class TUI {
                     // Check the state of this space of the patch
                     patchSpace = patch.spaces.get(r-patchY).get(c-patchX);
                 }
-
                 this.drawQuiltBoardSpace(boardSpace, patchSpace);
             }
             System.out.println();

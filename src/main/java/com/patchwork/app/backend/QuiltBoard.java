@@ -7,19 +7,17 @@ import java.util.List;
 
 public class QuiltBoard {
 
-    public List<List<Boolean>> spaces;
+    public Boolean  spaces[][];
     public List<Patch> patches;
 
 
     //Constructor
     public QuiltBoard() {
-        this.spaces = new ArrayList<>();
+        this.spaces = new Boolean[9][9];
         for (int i = 0; i < 9; i++) {
-            ArrayList<Boolean> row = new ArrayList<>();
             for (int j = 0; j < 9; j++) {
-                row.add(false);
+                this.spaces[i][j] = false;
             }
-            this.spaces.add(row);
         }
         this.patches = new ArrayList<>();
     }
@@ -58,7 +56,7 @@ public class QuiltBoard {
         for (List<Integer> patchCoordinate : patchCoordinates) {
             int xCoord = patchCoordinate.get(0);
             int yCoord = patchCoordinate.get(1);
-            if (spaces.get(y + yCoord).get(x + xCoord)) {
+            if (spaces[y + yCoord][x + xCoord]) {
                 return false;
             }
         }
@@ -80,7 +78,7 @@ public class QuiltBoard {
             for (List<Integer> patchCoordinate : patchCoordinates) {
                 int xCoord = patchCoordinate.get(0);
                 int yCoord = patchCoordinate.get(1);
-                spaces.get(y + yCoord).set(x + xCoord, true);
+                spaces[y + yCoord][x + xCoord] = true;
             }
 
             patches.add(patch);
@@ -99,7 +97,7 @@ public class QuiltBoard {
 
 
         int consecutiveCounter = 1;
-        for (int i = 1; i < spaces.size(); i++) {
+        for (int i = 1; i < spaces.length; i++) {
             //If at any point a 7x7 matrix is full, return true, as it might get reset if last 2 rows are empty
             //Count only y here because for y to increment x has to >=7
             if (consecutiveCounter >= 7) {
@@ -110,8 +108,8 @@ public class QuiltBoard {
 
 
             //Loop to determine if there are 7 consecutive trues horizontal
-            for (int j = 1; j < spaces.get(i).size(); j++) {
-                if (spaces.get(i).get(j) == spaces.get(i).get(j - 1) && spaces.get(i).get(j)) {
+            for (int j = 1; j < spaces[i].length; j++) {
+                if (spaces[i][j] == spaces[i][j - 1] && spaces[i][j]) {
                     xCount += 1;
                 } else {
                     //Reset counter, need 7 consecutive trues
@@ -121,8 +119,8 @@ public class QuiltBoard {
             //If there are more than or equal 7 consecutive horizontal, check if these also correspond vertically
             if (xCount >= 7) {
                 int yCount = 0;
-                for (int j = 0; j < spaces.get(i).size(); j++) {
-                    if (spaces.get(i).get(j) == spaces.get(i - 1).get(j) && spaces.get(i).get(j)) {
+                for (int j = 0; j < spaces[i].length; j++) {
+                    if (spaces[i][j] == spaces[i - 1][j] && spaces[i][j]) {
                         yCount += 1;
                     } else {
                         yCount = 1;
@@ -141,9 +139,9 @@ public class QuiltBoard {
 
     public int countEmpty(){
         int emptySpaces = 0;
-        for (List<Boolean> space : spaces) {
-            for (Boolean bool : space) {
-                if (!bool) {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if(spaces[i][j] == false){
                     emptySpaces += 1;
                 }
             }

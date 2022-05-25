@@ -13,9 +13,7 @@ public class TimeBoard {
 
     public TimeBoard(List<Player> players) {
         this.spaces = new ArrayList<>();
-//        Integer[] buttonsIndices = new Integer[]{8,15, 23, 27, 32,35,41,49};
         List<Integer> buttonsIndicesList = Arrays.asList(new Integer[]{8,15, 23, 27, 32,35,41,49});
-//        int specialPatchIndices[] = new Integer[]{20, 29, 37, 43, 48, 51}
         List<Integer> specialPatchIndicesList = Arrays.asList(new Integer[]{20, 29, 37, 43, 48, 51});
         for (int i = 0; i < 52; i++) {  // TODO: populate board with actual contents
             if(i == 0){
