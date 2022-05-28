@@ -11,12 +11,12 @@ public class QuiltBoardTest {
 
         //Assert a 9x9 empty board is made according to the expected constructor
 
-        Assert.assertEquals(9, quiltBoard.spaces.size());
-        Assert.assertEquals(9, quiltBoard.spaces.get(0).size());
+        Assert.assertEquals(9, quiltBoard.spaces.length);
+        Assert.assertEquals(9, quiltBoard.spaces[0].length);
 
-        for (int i = 0; i < quiltBoard.spaces.size(); i++) {
-            for (int j = 0; j < quiltBoard.spaces.get(i).size(); j++) {
-                Assert.assertFalse(quiltBoard.spaces.get(i).get(j));
+        for (int i = 0; i < quiltBoard.spaces.length; i++) {
+            for (int j = 0; j < quiltBoard.spaces[i].length; j++) {
+                Assert.assertFalse(quiltBoard.spaces[i][j]);
             }
         }
         Assert.assertEquals(0, quiltBoard.patches.size());
@@ -65,39 +65,39 @@ public class QuiltBoardTest {
         Assert.assertFalse(quiltBoard.hasSevenBySeven());
 
         //Now make it a 9x9 full true matrix == true
-        for (int i = 0; i < quiltBoard.spaces.size(); i++){
-            for (int j = 0; j < quiltBoard.spaces.get(i).size(); j++){
-                quiltBoard.spaces.get(i).set(j, true);
+        for (int i = 0; i < quiltBoard.spaces.length; i++){
+            for (int j = 0; j < quiltBoard.spaces[i].length; j++){
+                quiltBoard.spaces[i][j] =  true;
             }
         }
         Assert.assertTrue(quiltBoard.hasSevenBySeven());
 
         //Remove row 6, now we have a 6x9 so == false
-        for (int i = 0; i < quiltBoard.spaces.get(6).size(); i++) {
-            quiltBoard.spaces.get(6).set(i, false);
+        for (int i = 0; i < quiltBoard.spaces[6].length; i++) {
+            quiltBoard.spaces[6][i] = false;
         }
         Assert.assertFalse(quiltBoard.hasSevenBySeven());
 
         //Add it back in, should be back to == true
-        for (int i = 0; i < quiltBoard.spaces.get(6).size(); i++) {
-            quiltBoard.spaces.get(6).set(i, true);
+        for (int i = 0; i < quiltBoard.spaces[6].length; i++) {
+            quiltBoard.spaces[6][i] =  true;
         }
         Assert.assertTrue(quiltBoard.hasSevenBySeven());
 
         //Because we now want to remove column 6 instead, had to ensure that this is solely because of this removed column == false
-        for (int i = 0; i < quiltBoard.spaces.size(); i++) {
-            quiltBoard.spaces.get(i).set(6, false);
+        for (int i = 0; i < quiltBoard.spaces.length; i++) {
+            quiltBoard.spaces[i][6] =  false;
         }
         Assert.assertFalse(quiltBoard.hasSevenBySeven());
 
 
         //Final test, put it back to true and remove 1 space in the middle of the board
-        for (int i = 0; i < quiltBoard.spaces.size(); i++) {
-            quiltBoard.spaces.get(i).set(6, true);
+        for (int i = 0; i < quiltBoard.spaces.length; i++) {
+            quiltBoard.spaces[i][6] =  true;
         }
         Assert.assertTrue(quiltBoard.hasSevenBySeven());
 
-        quiltBoard.spaces.get(4).set(4,false);
+        quiltBoard.spaces[4][4] = false;
         Assert.assertFalse(quiltBoard.hasSevenBySeven());
     }
 
@@ -116,9 +116,9 @@ public class QuiltBoardTest {
         Assert.assertEquals(81-quiltBoard.patchToCoords(testPatch).size(), quiltBoard.countEmpty());
 
         //Now make it a 9x9 full true matrix == true
-        for (int i = 0; i < quiltBoard.spaces.size(); i++){
-            for (int j = 0; j < quiltBoard.spaces.get(i).size(); j++){
-                quiltBoard.spaces.get(i).set(j, true);
+        for (int i = 0; i < quiltBoard.spaces.length; i++){
+            for (int j = 0; j < quiltBoard.spaces[i].length; j++){
+                quiltBoard.spaces[i][j] =  true;
             }
         }
         Assert.assertEquals(0, quiltBoard.countEmpty());
