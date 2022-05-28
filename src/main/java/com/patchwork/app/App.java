@@ -1,7 +1,11 @@
 package com.patchwork.app;
 
 import com.patchwork.app.backend.Game;
+import com.patchwork.app.backend.GameController;
+import com.patchwork.app.backend.GameException;
 import com.patchwork.app.frontend.TUI;
+
+import java.util.Scanner;
 
 /**
  * Hello world!
@@ -9,13 +13,13 @@ import com.patchwork.app.frontend.TUI;
  */
 public class App
 {
-    public static void main( String[] args )
-    {
+    public static void main( String[] args ) throws GameException {
         System.out.println( "Hello World!" );
 
         // TODO: maybe do something with arguments, launch the game
-        Game game = new Game();
-        TUI tui = new TUI(game);
-        tui.run();
+        GameController gc = new GameController();
+        gc.run();
+
+
     }
 }
