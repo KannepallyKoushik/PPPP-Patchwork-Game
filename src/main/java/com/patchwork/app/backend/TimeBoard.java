@@ -61,8 +61,6 @@ public class TimeBoard {
     }
 
     public Player getCurrentPlayer() {
-//        return null;
-        // TODO: implement
         Integer player1Position = playerPositions.get(players.get(0));
         Integer player2Position = playerPositions.get(players.get(1));
         if(player1Position > player2Position ){
@@ -78,13 +76,10 @@ public class TimeBoard {
     }
 
     public int getPlayerPosition(Player player) {
-//        return 0;
-        // TODO: implement
         return playerPositions.get(player);
     }
 
     public void movePlayer(Player player, int position) {
-        // TODO: implement
         Integer currentPlayerPosition = playerPositions.get(player);
         Integer expectedPlayerPosition = currentPlayerPosition + position;
 
