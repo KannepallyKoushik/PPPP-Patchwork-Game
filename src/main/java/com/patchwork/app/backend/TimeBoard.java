@@ -1,15 +1,12 @@
 package com.patchwork.app.backend;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TimeBoard {
 
     public List<List<SpaceElement>> spaces;
     public List<Player> players;
-    public Map<Player, Integer> playerPositions;
+    public Map<Player, Integer> playerPositions = new HashMap<>();
 
     public TimeBoard(List<Player> players) {
         this.spaces = new ArrayList<>();
@@ -37,6 +34,9 @@ public class TimeBoard {
             }
         }
         this.players = players;
+
+        playerPositions.put(players.get(0), 0);
+        playerPositions.put(players.get(1), 0);
     }
 
     public enum SpaceElementType {
@@ -85,11 +85,15 @@ public class TimeBoard {
 
         // 1. Clearing the SpaceElement where the Player is from spaces list
         List<SpaceElement> space = spaces.get(currentPlayerPosition);
+        List<SpaceElement> toRemove = new ArrayList<>();
         for(SpaceElement se : space){
             if(player.equals(se.getPlayer())){
-                space.remove(se);
+                toRemove.add(se);
             }
         }
+
+        space.removeAll(toRemove);
+
 
         // 2. Updating new position of player in spaces list
         List<SpaceElement> newSpace = spaces.get(expectedPlayerPosition);
