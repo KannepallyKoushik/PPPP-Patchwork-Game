@@ -345,6 +345,8 @@ public class GameFlowTest {
         game = makeFinishedGame();
         gameInput.doMove(Move.MOVE_LEFT);
         gameInput.doMove(Move.CONFIRM);
+
+        //Assertion should be done by 'expected' annotation
     }
 
 
