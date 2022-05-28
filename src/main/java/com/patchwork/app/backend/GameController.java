@@ -4,6 +4,7 @@ import com.patchwork.app.backend.GameStates.GameState;
 import com.patchwork.app.backend.GameStates.PickMove;
 import com.patchwork.app.backend.GameStates.PickPatch;
 import com.patchwork.app.backend.Inputs.GameInput;
+import com.patchwork.app.backend.Inputs.ScannerInput;
 import com.patchwork.app.backend.Mock.Scanners;
 import com.patchwork.app.backend.Mock.RealScanner;
 import com.patchwork.app.frontend.TUI;
@@ -21,7 +22,7 @@ public class GameController {
 
     //realScanner is an actual System.in scanner, as opposed to a mock scanner used in the tests
     //Hopefully this will be gone when gameInput & states is working
-    public GameInput scanner;
+    public GameInput input;
 
     public Move move;
 
@@ -33,7 +34,7 @@ public class GameController {
         this.game = new Game();
         this.textUI = new TUI(game);
         this.currentPlayer = game.players.get(new Random().nextInt(game.players.size()));
-        this.scanner = new GameInput(new Scanner(System.in));
+        this.input = new ScannerInput();
     }
 
     public void run() throws GameException {
@@ -56,7 +57,9 @@ public class GameController {
             System.out.println("Please choose your action:");
             System.out.println("Choice between moving (MOVE) or buying a patch (BUY)");
             //Determine what move the player wants
-            String next = pickMove(scanner);
+
+            //TODO
+            String next = "a";
 
             if (next.equals("MOVE")) {
                 //Simply move the player according to game logic
@@ -70,9 +73,10 @@ public class GameController {
                 System.out.println("Please choose your patch, with numbers 1-3");
 
                 //Let the player pick the patch
-                Patch selectedPatch = pickPatch(scanner);
+                //TODO
+                Patch selectedPatch = pickPatch((Scanners) input);
                 //Then options to place the patch
-                placePatch(selectedPatch,scanner);
+                placePatch(selectedPatch, (Scanners) input);
             } else {
                 System.out.println("Please enter a valid command");
             }
