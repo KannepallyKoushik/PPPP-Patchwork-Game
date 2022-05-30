@@ -5,5 +5,6 @@ public enum Move {
     MOVE_RIGHT,
     MOVE_UP,
     MOVE_DOWN,
-    CONFIRM
+    CONFIRM,
+    WAITING
 }

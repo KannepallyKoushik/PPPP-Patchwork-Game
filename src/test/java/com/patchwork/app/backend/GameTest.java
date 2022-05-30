@@ -1,5 +1,6 @@
 package com.patchwork.app.backend;
 
+import com.patchwork.app.backend.Exceptions.GameException;
 import org.junit.Assert;
 import org.junit.Test;
 

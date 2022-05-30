@@ -3,18 +3,22 @@ package com.patchwork.app.backend.Inputs;
 import com.patchwork.app.backend.Move;
 
 public class MockGameInput extends GameInput {
+    public Move move = Move.WAITING;
 
-    public void run() {
-        while (true) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                return;
-            }
-        }
+
+    public void updateMove(Move move){
+        this.move = move;
     }
 
-    public void doMove(Move move) {
+
+
+
+    @Override
+    public void run() {
         notify(move);
+        if (move != Move.WAITING){
+            System.out.println(move);
+        }
+        move = Move.WAITING;
     }
 }

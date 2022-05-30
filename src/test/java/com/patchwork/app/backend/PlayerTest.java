@@ -1,5 +1,6 @@
 package com.patchwork.app.backend;
 
+import com.patchwork.app.backend.Exceptions.GameException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -28,7 +29,7 @@ public class PlayerTest {
     }
 
     @Test
-    public void placePatchTest(){
+    public void placePatchTest() throws GameException {
 
         Player player = new Player("Test");
         PatchFactory patchFactory = new PatchFactory();
@@ -55,7 +56,7 @@ public class PlayerTest {
     }
 
     @Test
-    public void addPatchButtons(){
+    public void addPatchButtons() throws GameException {
         Player player = new Player("Test");
         PatchFactory patchFactory = new PatchFactory();
 

@@ -1,5 +1,7 @@
 package com.patchwork.app.backend;
 
+import com.patchwork.app.backend.Exceptions.GameException;
+
 public class Player {
 
     public String name;
@@ -35,7 +37,7 @@ public class Player {
     @param y        The top most coordinate of the matrix space which you want to place
     @return         True if the patch has been placed, false otherwise (either cant place or no buttons)
     */
-    public boolean placePatch(Patch patch, int x, int y) {
+    public boolean placePatch(Patch patch, int x, int y) throws GameException {
         if (quiltBoard.canPlace(patch, x, y) && patch.buttonCost <= nrButtons) {
             quiltBoard.placePatch(patch, x, y);
             payButtons(patch.buttonCost);

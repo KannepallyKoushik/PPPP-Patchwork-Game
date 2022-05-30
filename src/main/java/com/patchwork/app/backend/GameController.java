@@ -1,19 +1,15 @@
 package com.patchwork.app.backend;
 
-import com.patchwork.app.backend.GameStates.GameState;
-import com.patchwork.app.backend.GameStates.PickMove;
-import com.patchwork.app.backend.GameStates.PickPatch;
-import com.patchwork.app.backend.Inputs.GameInput;
-import com.patchwork.app.backend.Inputs.ScannerInput;
-import com.patchwork.app.backend.Mock.Scanners;
-import com.patchwork.app.backend.Mock.RealScanner;
+import com.patchwork.app.backend.Exceptions.CanNotAffordException;
+import com.patchwork.app.backend.Exceptions.GameException;
+import com.patchwork.app.backend.GameStates.*;
+import com.patchwork.app.backend.Inputs.*;
 import com.patchwork.app.frontend.TUI;
 
 import java.util.Random;
-import java.util.Scanner;
 
-public class GameController {
-    public TUI textUI;
+public class GameController implements GameInputObserver, Runnable  {
+    TUI textUI;
     public Game game;
 
     //Have to make this public for a test
@@ -24,66 +20,74 @@ public class GameController {
     //Hopefully this will be gone when gameInput & states is working
     public GameInput input;
 
-    public Move move;
+    public GameState currentState;
+    public boolean isFinished = false;
+    private boolean turnFinished = false;
+    public Move move = Move.WAITING;
 
-    // TODO Currently not working due to missing implementation
-    //    public GameInput input;
-        public GameState currentState;
-
-    public GameController(){
-        this.game = new Game();
-        this.textUI = new TUI(game);
-        this.currentPlayer = game.players.get(new Random().nextInt(game.players.size()));
-        this.input = new ScannerInput();
+    public GameController(GameInput gameInput) {
+        game = new Game();
+        textUI = new TUI(game);
+        currentPlayer = game.players.get(new Random().nextInt(game.players.size()));
+        input = gameInput;
+        input.subscribe(this);
     }
 
-    public void run() throws GameException {
-        textUI = new TUI(game);
-        boolean isFinished = false;
 
+    public void start() throws GameException, InterruptedException {
 
         //Start game loop
         while (!isFinished) {
+            //Starting state is the current player, this player should know:
+            //TimeBoard, available patches and quiltBoard to determine their move
+            currentState = new PickMove(currentPlayer, currentPlayer.quiltBoard, game.patchList.getAvailablePatches(), game.timeBoard);
 
-//            currentState = new PickMove(currentPlayer, game.);
-
-            //Let TUI draw necessary components before picking move
+            //Since TUI drawing based on state is not yet implemented:
             textUI.drawTimeBoard();
             textUI.drawQuiltBoard(currentPlayer.quiltBoard);
             textUI.drawPatches();
 
             //Now wait for user move
+            System.out.println("Hello " + currentPlayer.name);
             System.out.println("You have " + currentPlayer.nrButtons + " buttons");
-            System.out.println("Please choose your action:");
-            System.out.println("Choice between moving (MOVE) or buying a patch (BUY)");
+
+
             //Determine what move the player wants
 
-            //TODO
-            String next = "a";
+            boolean moveConfirmed = false;
 
-            if (next.equals("MOVE")) {
-                //Simply move the player according to game logic
-                game.movePastNextPlayer(currentPlayer);
-            } else if (next.equals("BUY")) {
-                //First draw some useful components for picking a patch
-                //Implement state drawing later when this is implemented in TUI
-                currentState = new PickPatch(currentPlayer, game.patchList.getAvailablePatches(), game.patchList.getAvailablePatches().get(0));
-                textUI.drawQuiltBoard(currentPlayer.quiltBoard);
-                textUI.drawPatches();
-                System.out.println("Please choose your patch, with numbers 1-3");
-
-                //Let the player pick the patch
-                //TODO
-                Patch selectedPatch = pickPatch((Scanners) input);
-                //Then options to place the patch
-                placePatch(selectedPatch, (Scanners) input);
-            } else {
-                System.out.println("Please enter a valid command");
+            //Loop for choosing a move
+            while (!moveConfirmed) {
+                moveConfirmed = pickMove();
             }
-
-            currentPlayer = getNextPlayer(currentPlayer);
+            Thread.sleep(100);
+            //Loop for picking & placing a patch
+            Patch selectedPatch = null;
+            boolean patchPlaced = false;
+            if (!turnFinished) {
+                //Picking patch
+                try {
+                    while (selectedPatch == null) {
+                        selectedPatch = pickPatch();
+                    }
+                    while (!patchPlaced) {
+                        //Now start logic for placing a patch
+                        try {
+                            patchPlaced = placePatch(selectedPatch);
+                        } catch (GameException e){
+                            System.out.println(e.getMessage());
+                        }
+                    }
+                } catch (CanNotAffordException e) {
+                    System.out.println("You could not afford any patches, automatically moving you...");
+                    game.movePastNextPlayer(currentPlayer);
+                }
+            }
+            System.out.println("Switching player turn");
+            currentPlayer = game.timeBoard.getCurrentPlayer();
             isFinished = game.isFinished();
         }
+        currentState = new Finished();
 
         //Game is finished, let tui draw result (when implemented)
         /*
@@ -92,8 +96,8 @@ public class GameController {
     }
 
 
-    //Helper function to determine next player
-    public Player getNextPlayer(Player player) {
+    //Helper function to determine opponent player
+    public Player getOtherPlayer(Player player) {
         int index = game.players.indexOf(player);
         if (index + 1 == game.players.size()) {
             return game.players.get(0);
@@ -102,139 +106,188 @@ public class GameController {
     }
 
 
-    //Helper function to interact with console
-    //Should later on be redundant once GameInput works
-    private String scan(Scanners scanners) {
-        return scanners.nextLine();
-    }
+    public boolean pickMove() throws GameException, InterruptedException {
+        int selectedIndex = 0;
+        boolean movePicked = false;
 
+        while (!movePicked) {
+            System.out.print("You are currently selecting: ");
+            switch (selectedIndex) {
+                case 0:
+                    System.out.println("Move past next player");
+                    break;
+                case 1:
+                    System.out.println("Buy a patch");
+                    break;
+            }
 
-    public String pickMove(Scanners scanner) {
+            System.out.println("Change your selection by typing LEFT or RIGHT, or confirm with CONFIRM");
+            while(move.equals(Move.WAITING)){
+                Thread.sleep(100);
+                input.run();
+            }
+            if (move.equals(Move.CONFIRM)) {
+                //Set to waiting so next move starts fresh
+                move = Move.WAITING;
 
-
-
-        /*
-        Normally translate this input to GameInput, like
-        input = new GameInput(input);
-        For now implement some hardcoded stuff to avoid GameInput class,
-        this decision should eventually be done interacting with the GameInput class
-        */
-
-        //This scanner is because in the tests you want to mock the input data, because System.in does not work in JUNIT
-        while (true) {
-            String input = scan(scanner);
-            if (input.equals("MOVE")) {
-                return "MOVE";
-            } else if (input.equals("BUY")) {
-                boolean canBuy = false;
-                for (int i = 0; i < game.patchList.getAvailablePatches().size(); i++){
-                    if (currentPlayer.nrButtons > game.patchList.getAvailablePatches().get(i).buttonCost){
-                        canBuy = true;
-                    }
-                }
-                if (canBuy){
-                    return "BUY";
-                } else{
-                    System.out.println("Can not afford any patches, automatically choose move");
-                    return "MOVE";
-                }
+                //Set to true to exit choosing move loop
+                movePicked = true;
+            } else if (move.equals(Move.MOVE_LEFT)) {
+                //This might be redundant, since it is always 0 in this case (unless more options gets added later)
+//                    selectedIndex = Math.max(0, selectedIndex - 1);
+                selectedIndex = 0;
+                move = Move.WAITING;
+            } else if (move.equals(Move.MOVE_RIGHT)) {
+                //Idem as above
+//                    selectedIndex = Math.min(1, selectedIndex + 1);
+                selectedIndex = 1;
+                move = Move.WAITING;
             } else {
-                System.out.println("Please enter a valid command");
+                //There was input, but not relevant input
+                System.out.println("Please use either LEFT or RIGHT or CONFIRM");
+                move = Move.WAITING;
             }
         }
+
+
+        if (selectedIndex == 0) {
+            //User selected move past next player
+            game.movePastNextPlayer(currentPlayer);
+            turnFinished = true;
+            return true;
+        } else if (selectedIndex == 1) {
+            //User selected buy
+            turnFinished = false;
+            return true;
+        } else {
+            throw new GameException("Selected index has to be 0 or 1");
+        }
+
     }
 
-    public Patch pickPatch(Scanners scanner) {
 
+    public Patch pickPatch() throws CanNotAffordException, InterruptedException {
 
-        //For now, implement with scanner as GameInput has not been implemented
+        //First check if user can even buy anything
+        boolean canBuy = false;
+        for (int i = 0; i < game.patchList.getAvailablePatches().size(); i++) {
+            if (currentPlayer.nrButtons >= game.patchList.getAvailablePatches().get(i).buttonCost) {
+                canBuy = true;
+            }
+        }
+        if (canBuy) {
+            int patchIndex = 0;
+            Patch selectedPatch = null;
 
-        boolean selected = false;
-        Patch selectedPatch = null;
-        String input;
+            while (selectedPatch == null) {
+                Patch currentPatch;
+                //First draw some useful components for picking a patch
+                currentState = new PickPatch(currentPlayer, currentPlayer.quiltBoard, game.patchList.getAvailablePatches(), patchIndex);
+                textUI.drawQuiltBoard(currentPlayer.quiltBoard);
+                textUI.drawPatches();
+                System.out.println("Please choose your patch by typing LEFT or RIGHT or CONFIRM");
+                System.out.println("You are currently choosing the " + patchIndex + " patch.");
 
-        //Same scanner issue as with pickMove();
-        while (!selected) {
-            input = scan(scanner);
-            int choice;
-            try {
-                choice = Integer.parseInt(input);
-                Patch chosenPatch = game.patchList.getAvailablePatches().get(choice - 1);
-                if (chosenPatch.buttonCost > currentPlayer.nrButtons) {
-                    System.out.println("Can not afford button cost of the selected patch, please pick again");
-                } else {
-                    selected = true;
-                    selectedPatch = chosenPatch;
+                while(move.equals(Move.WAITING)){
+                    Thread.sleep(100);
+                    input.run();
                 }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid choice, please enter a number 1-3");
+                if (move.equals(Move.CONFIRM)) {
+                    currentPatch = game.patchList.getAvailablePatches().get(patchIndex);
+
+                    //Check if player can buy the selected patch
+                    if (currentPatch.buttonCost > currentPlayer.nrButtons) {
+                        System.out.println("You can not afford this patch");
+                        move = Move.WAITING;
+                    } else {
+                        selectedPatch = currentPatch;
+                        move = Move.WAITING;
+                        return selectedPatch;
+                    }
+                } else if (move.equals(Move.MOVE_LEFT)) {
+                    patchIndex = Math.max(0, patchIndex - 1);
+                    move = Move.WAITING;
+                } else if (move.equals(Move.MOVE_RIGHT)) {
+                    patchIndex = Math.min(2, patchIndex + 1);
+                    move = Move.WAITING;
+                } else {
+                    //There was input, but not relevant input
+                    System.out.println("Please use either LEFT or RIGHT or CONFIRM");
+                    move = Move.WAITING;
+                }
             }
+        } else {
+            throw new CanNotAffordException("You can not afford any patches");
         }
-        return selectedPatch;
+        return null;
     }
 
-    public void placePatch(Patch selectedPatch, Scanners scanner) {
+
+    public boolean placePatch(Patch selectedPatch) throws GameException, InterruptedException {
         //Player has now selected a patch, now loop for placing the patch
         boolean placed = false;
         int x = 0;
         int y = 0;
-        System.out.println("Please place your patch, with either LEFT RIGHT UP DOWN or PLACE");
 
-        String input;
         while (!placed) {
+            currentState = new PlacePatch(currentPlayer, currentPlayer.quiltBoard, selectedPatch, x, y);
             textUI.drawQuiltBoardWithPatch(currentPlayer.quiltBoard, selectedPatch, x, y);
-            input = scan(scanner);
-            switch (input) {
-                case "UP":
-                    if (y == 0) {
-                        System.out.println("Can not move up any more");
-                    } else {
-                        y -= 1;
-                    }
+            System.out.println("Please place your patch, with either LEFT RIGHT UP DOWN or CONFIRM");
+            while(move.equals(Move.WAITING)){
+                Thread.sleep(100);
+                input.run();
+            }
+            System.out.println("MOVE: "+ move);
+            if (move.equals(Move.CONFIRM)) {
+                //Set to waiting so next move starts fresh
+                move = Move.WAITING;
 
-                    break;
-                case "DOWN":
-                    if (y == 9) {
-                        System.out.println("Can not move down any more");
-                    } else {
-                        y += 1;
-                    }
-                    break;
-                case "LEFT":
-                    if (x == 0) {
-                        System.out.println("Can not move left any more");
-                    } else {
-                        x -= 1;
-                    }
-                    break;
-                case "RIGHT":
-                    if (x == 9) {
-                        System.out.println("Can not move right any more");
-                    } else {
-                        x += 1;
-                    }
-                    break;
-                case "PLACE":
-                    try {
-                        game.placePatch(currentPlayer, selectedPatch, x, y);
-                        placed = true;
-                    } catch (GameException e) {
-                        System.out.println("Can not place patch currently");
-                    }
-                    break;
-                default:
-                    System.out.println("Please enter a valid command");
-                    break;
+                try {
+                    game.placePatch(currentPlayer, selectedPatch, x, y);
+                    //Set to true to exit choosing move loop
+                    placed = true;
+                } catch (GameException e) {
+                    throw new GameException(e.getMessage());
+                }
+            } else if (move.equals(Move.MOVE_LEFT)) {
+                x = Math.max(0, x - 1);
+                move = Move.WAITING;
+            } else if (move.equals(Move.MOVE_RIGHT)) {
+                x = Math.min(8, x + 1);
+                move = Move.WAITING;
+            } else if (move.equals(Move.MOVE_UP)) {
+                y = Math.max(0, y - 1);
+                move = Move.WAITING;
+            } else if (move.equals(Move.MOVE_DOWN)) {
+                y = Math.min(8, y + 1);
+                move = Move.WAITING;
+            } else {
+                System.out.println("Please enter a valid command");
             }
         }
+        System.out.println("hierz");
+        System.out.println(placed);
+        return placed;
     }
 
 
-    public void update(Move move){
+    public void update(Move move) {
         this.move = move;
     }
 
-    public GameState getState(){
+    public GameState getState() {
         return currentState;
+    }
+
+
+    @Override
+    public void run() {
+        try {
+            start();
+        } catch (GameException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

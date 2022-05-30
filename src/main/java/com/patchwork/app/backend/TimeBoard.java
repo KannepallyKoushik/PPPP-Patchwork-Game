@@ -64,10 +64,10 @@ public class TimeBoard {
         Integer player1Position = playerPositions.get(players.get(0));
         Integer player2Position = playerPositions.get(players.get(1));
         if(player1Position > player2Position ){
-            return players.get(0);
+            return players.get(1);
         }
         else if(player1Position < player2Position){
-            return players.get(1);
+            return players.get(0);
         }else{
             List<SpaceElement> s = spaces.get(getPlayerPosition(players.get(0)));
             SpaceElement se = s.get(s.size() - 1);
@@ -81,7 +81,7 @@ public class TimeBoard {
 
     public void movePlayer(Player player, int position) {
         Integer currentPlayerPosition = playerPositions.get(player);
-        Integer expectedPlayerPosition = currentPlayerPosition + position;
+        Integer expectedPlayerPosition = position;
 
         // 1. Clearing the SpaceElement where the Player is from spaces list
         List<SpaceElement> space = spaces.get(currentPlayerPosition);

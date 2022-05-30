@@ -37,12 +37,15 @@ public class PatchList {
 
     public void removePatch(Patch patch) {
         if (!getAvailablePatches().contains(patch)) {
-            throw new RuntimeException("Patch is not present in patch list");
+//            throw new RuntimeException("Patch is not present in patch list");
+        } else{
+            int patchIndex = patches.indexOf(patch);
+            patches.remove(patchIndex);
+
+            neutralTokenPosition = patchIndex;
         }
 
-        int patchIndex = patches.indexOf(patch);
-        patches.remove(patchIndex);
 
-        neutralTokenPosition = patchIndex;
+
     }
 }

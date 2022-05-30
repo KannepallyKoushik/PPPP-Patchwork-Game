@@ -1,5 +1,6 @@
 package com.patchwork.app.backend;
 
+import com.patchwork.app.backend.Exceptions.GameException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -11,34 +11,28 @@ public class ScannerInput extends GameInput {
 
     @Override
     public void run() {
+        s = new Scanner(System.in);
+        String input = s.nextLine();
+        notify(getMoveFromInput(input));
 
-        while(true){
-            String input = s.nextLine();
-//            if (inpu)
-        }
     }
 
 
-    public Move getMoveFromInput(String input ) {
+    public Move getMoveFromInput(String input) {
         if (input.equals("CONFIRM")) {
             return Move.CONFIRM;
-        } else if (input.equals("BUY")) {
-            boolean canBuy = false;
-//            for (int i = 0; i < game.patchList.getAvailablePatches().size(); i++) {
-//                if (currentPlayer.nrButtons > game.patchList.getAvailablePatches().get(i).buttonCost) {
-//                    canBuy = true;
-//                }
-//            }
-            if (canBuy) {
-//                return "BUY";
-            } else {
-                System.out.println("Can not afford any patches, automatically choose move");
-//                return "MOVE";
-            }
+        } else if (input.equals("LEFT")) {
+            return Move.MOVE_LEFT;
+        } else if (input.equals("RIGHT")) {
+            return Move.MOVE_RIGHT;
+        } else if (input.equals("UP")) {
+            return Move.MOVE_UP;
+        } else if (input.equals("DOWN")) {
+            return Move.MOVE_DOWN;
         } else {
             System.out.println("Please enter a valid command");
         }
-        return null;
+        return Move.WAITING;
     }
 }
 

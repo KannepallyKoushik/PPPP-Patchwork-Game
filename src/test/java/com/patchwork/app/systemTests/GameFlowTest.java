@@ -1,14 +1,15 @@
 package com.patchwork.app.systemTests;
 
 import com.patchwork.app.backend.*;
+import com.patchwork.app.backend.Exceptions.GameException;
 import com.patchwork.app.backend.GameStates.GameStateType;
 import com.patchwork.app.backend.GameStates.PlacePatch;
 import com.patchwork.app.backend.Inputs.GameInput;
 import com.patchwork.app.backend.Inputs.MockGameInput;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 
 import java.util.Arrays;
 
@@ -20,13 +21,13 @@ import static org.junit.Assert.assertEquals;
 // [x] 1. Correct setup at start of game                        setupTest
 // [x] 2. Correct player takes turn                             correctPlayerTest
 // [x] 3. Correct execution of “Advance and Receive Buttons”    advanceToNextPlayerTest
-// [ ] 4. Correct execution of “Take and Place Patch”           placePatchTest (?)
+// [x] 4. Correct execution of “Take and Place Patch”           placePatchTest
 // [x] 5. An unusual input or event                             testPlacePatchInvalidLocation
-// [ ] Finalizing game test
+// [x] Finalizing game test                                     testFinishGame
 // [x] Seven x seven test                                       testPlacePatchSpecialTile
 // [x] Placing overlapping patch should fail                    testPlacePatchOverlap
 // [x] Trying to buy patch but not enough buttons should fail   testPlacePatchNotEnoughButtons
-// [x] Trying to move after game is finished should fail        testMovePastNextPlayerGameFinished
+// [x] Trying to buy a patch when game is finished should fail  testBuyPatchGameFinished
 
 
 public class GameFlowTest {
@@ -37,6 +38,7 @@ public class GameFlowTest {
     Player startingPlayer;
     Player nextPlayer;
     public static final int DEFAULT_NR_BUTTONS = 5;
+    Thread t;
 
 
     private static Patch makeSevenBySevenPatch() {
@@ -57,61 +59,73 @@ public class GameFlowTest {
     }
 
     //Method used in moving past a player after a finished game
-    private static Game makeFinishedGame() {
-        Game game = new Game();
-        game.timeBoard.movePlayer(game.players.get(0), 51);
-
-
+    private void makeFinishedGame() throws GameException, InterruptedException {
+        game.timeBoard.movePlayer(nextPlayer, 51);
+        gameInput.updateMove(Move.MOVE_LEFT);
+        Thread.sleep(300);
+        gameInput.updateMove(Move.CONFIRM);
+        Thread.sleep(300);
         if (!game.isFinished()) {
             throw new RuntimeException("Created game is not finished");
         }
-
-        return game;
     }
 
 
     //Simple helper methods to facilitate choosing a specific option
     //Left most is either choosing to move the player, or buying the 1st tile
     //Move left first to make sure that the selected option remains the left most option
-    private void selectFirst(){
-        gameInput.doMove(Move.MOVE_LEFT);
-        gameInput.doMove(Move.MOVE_LEFT);
-        gameInput.doMove(Move.CONFIRM);
+
+    /*
+    TODO
+     Done in a not-that-well programmed manner, i.e. using sleeps as opposed to making sure the threads run nicely separately
+     Could be done in the future if there is time
+     */
+
+    private void selectFirst() throws InterruptedException {
+        Thread.sleep(300);
+        gameInput.updateMove(Move.MOVE_LEFT);
+        Thread.sleep(300);
+        gameInput.updateMove(Move.MOVE_LEFT);
+        Thread.sleep(300);
+        gameInput.updateMove(Move.CONFIRM);
+        Thread.sleep(300);
     }
 
     //Second is selecting to buy a patch, or buying the second patch
-    private void selectSecond(){
-        gameInput.doMove(Move.MOVE_LEFT);
-        gameInput.doMove(Move.MOVE_LEFT);
-        gameInput.doMove(Move.MOVE_RIGHT);
-        gameInput.doMove(Move.CONFIRM);
+    private void selectSecond() throws InterruptedException {
+        Thread.sleep(300);
+        gameInput.updateMove(Move.MOVE_LEFT);
+        Thread.sleep(300);
+        gameInput.updateMove(Move.MOVE_LEFT);
+        Thread.sleep(300);
+        gameInput.updateMove(Move.MOVE_RIGHT);
+        Thread.sleep(300);
+        gameInput.updateMove(Move.CONFIRM);
+        Thread.sleep(300);
     }
-
-    //This is exclusively for buying the third patch
-    private void selectThird(){
-        gameInput.doMove(Move.MOVE_LEFT);
-        gameInput.doMove(Move.MOVE_LEFT);
-        gameInput.doMove(Move.MOVE_RIGHT);
-        gameInput.doMove(Move.MOVE_RIGHT);
-        gameInput.doMove(Move.CONFIRM);
-    }
-
 
 
     //Make sure every test states with clean gameController and everything included
-    @BeforeEach
+    @Before
     public void setUp() {
-        gameController = new GameController();
-        gameController.input = new MockGameInput();
+        gameController = new GameController(new MockGameInput());
+        gameInput = (MockGameInput) gameController.input;
         game = gameController.game;
         startingPlayer = gameController.currentPlayer;
-        nextPlayer = gameController.getNextPlayer(startingPlayer);
+        nextPlayer = gameController.getOtherPlayer(startingPlayer);
+        t = new Thread(gameController);
+        t.start();
+    }
+
+    @After
+    public void tearDown() {
+        t.stop();
     }
 
 
     //Test to make sure gameController makes a correct game, implementing required test #1
     @Test
-    public void setupTest(){
+    public void setupTest() {
         //Assert 3 possible choices for patches
         assertEquals(3, game.patchList.getAvailablePatches().size());
 
@@ -128,7 +142,7 @@ public class GameFlowTest {
         assertTrue(game.players.contains(startingPlayer));
 
         //Assertions based on each player
-        for (int i = 0; i < game.players.size(); i++){
+        for (int i = 0; i < game.players.size(); i++) {
             //Assert starting button count
             assertEquals(DEFAULT_NR_BUTTONS, game.players.get(i).nrButtons);
             //Assert empty quiltboard
@@ -142,22 +156,19 @@ public class GameFlowTest {
 
     //Test to make sure the correct player takes the turn, implement required test #2
     @Test
-    public void correctPlayerTest() {
-        Player startingPlayer = gameController.currentPlayer;
-        Player nextPlayer = gameController.getNextPlayer(startingPlayer);
-
+    public void correctPlayerTest() throws InterruptedException {
         // Mock player 1 turn, i.e. move to somewhere on the board should end turn as well
         selectFirst();
 
 
         // Check Player2 is now current player, as they are the furthest behind
-        assertEquals(gameController.currentPlayer, nextPlayer);
+        assertEquals(gameController.currentPlayer.name, nextPlayer.name);
     }
 
 
     //Test whether advancing (i.e. move) works properly, for test #3
     @Test
-    public void advanceToNextPlayerTest() {
+    public void advanceToNextPlayerTest() throws InterruptedException {
 
         //Change opponents place
         game.timeBoard.movePlayer(nextPlayer, 10);
@@ -172,26 +183,34 @@ public class GameFlowTest {
 
     //Implement required test 4, picking and placing patch
     @Test
-    public void placePatchTest() {
+    public void placePatchTest() throws GameException, InterruptedException {
 
         // Select 'buy a patch'
         selectSecond();
+        Thread.sleep(1000);
         Assert.assertEquals(GameStateType.PICK_PATCH, gameController.getState().type);
 
         // Pick the first patch
         selectFirst();
+        Thread.sleep(1000);
         Assert.assertEquals(GameStateType.PLACE_PATCH, gameController.getState().type);
 
         // Make sure that the right patch was selected
         Patch selectedPatch = game.patchList.getAvailablePatches().get(0);
-        Assert.assertEquals(selectedPatch, ( (PlacePatch) gameController.getState()).patch);
+        Assert.assertEquals(selectedPatch, ((PlacePatch) gameController.getState()).patch);
 
         // Move the patch a few times and then place it
-        gameInput.doMove(Move.MOVE_RIGHT);
-        gameInput.doMove(Move.MOVE_RIGHT);
-        gameInput.doMove(Move.MOVE_RIGHT);
-        gameInput.doMove(Move.MOVE_DOWN);
-        gameInput.doMove(Move.CONFIRM);
+        gameInput.updateMove(Move.MOVE_RIGHT);
+        Thread.sleep(300);
+        gameInput.updateMove(Move.MOVE_RIGHT);
+        Thread.sleep(300);
+        gameInput.updateMove(Move.MOVE_RIGHT);
+        Thread.sleep(300);
+        gameInput.updateMove(Move.MOVE_DOWN);
+        Thread.sleep(300);
+        gameInput.updateMove(Move.CONFIRM);
+
+        Thread.sleep(500);
 
         //Assert that currentPlayer in the game has now changed
         Assert.assertNotEquals(startingPlayer, game.timeBoard.getCurrentPlayer());
@@ -202,7 +221,7 @@ public class GameFlowTest {
         // Check that the patch was properly placed
         QuiltBoard qb = new QuiltBoard();
         qb.placePatch(selectedPatch, 3, 1);
-        Assert.assertEquals(qb, startingPlayer.quiltBoard);
+        Assert.assertEquals(qb.spaces, startingPlayer.quiltBoard.spaces);
     }
 
 
@@ -232,7 +251,7 @@ public class GameFlowTest {
 
     //Test whether the game correctly finishes after both players are at position 51
     @Test
-    public void testFinishGame(){
+    public void testFinishGame() throws InterruptedException {
 
         //Let opponent finish
         game.timeBoard.movePlayer(nextPlayer, 51);
@@ -243,9 +262,8 @@ public class GameFlowTest {
 
         //assert game is finished and there is a result
         assertTrue(game.isFinished());
-
         assertNotNull(game.result);
-
+        assertEquals(gameController.currentState.type, GameStateType.FINISHED);
 
 
     }
@@ -267,10 +285,9 @@ public class GameFlowTest {
     }
 
 
-
-    //Test that an exception is thrown when a player tries to place patch on an already occupied spot
-    @Test(expected = GameException.class)
-    public void testPlacePatchOverlap()  {
+    //Test when a player tries to place patch on an already occupied spot
+    @Test
+    public void testPlacePatchOverlap() throws InterruptedException {
         //Add buttons to startingPlayer to ensure that they can always buy patches
         startingPlayer.addButtons(1000);
 
@@ -280,50 +297,42 @@ public class GameFlowTest {
 
         // Pick the first patch
         selectFirst();
+        //Should now be in placing patch state
         Assert.assertEquals(GameStateType.PLACE_PATCH, gameController.getState().type);
-
-        //For good measure, make sure that the tile is in top left corner
-        // (also tests that the borders of quiltboard work valid)
-        for (int i = 0; i < 7; i++ ){
-            gameInput.doMove(Move.MOVE_UP);
-            gameInput.doMove(Move.MOVE_LEFT);
-        }
-        gameInput.doMove(Move.CONFIRM);
+        //Place the patch and go to next player turn
+        gameInput.updateMove(Move.CONFIRM);
+        Thread.sleep(300);
 
         //Assert now it is next player turn
-        assertEquals(gameController.currentPlayer, gameController.getNextPlayer(startingPlayer));
+        assertEquals(gameController.currentPlayer, gameController.getOtherPlayer(startingPlayer));
 
         //Let next player move just to skip turn
         selectFirst();
-
+        Thread.sleep(300);
         //assert it is again starting player turn
         assertEquals(gameController.currentPlayer, startingPlayer);
 
         //Repeat turn again, i.e.:
-
         // Select 'buy a patch'
         selectSecond();
+        Thread.sleep(300);
         Assert.assertEquals(GameStateType.PICK_PATCH, gameController.getState().type);
 
         // Pick the first patch
         selectFirst();
+        Thread.sleep(300);
         Assert.assertEquals(GameStateType.PLACE_PATCH, gameController.getState().type);
+        gameInput.updateMove(Move.CONFIRM);
+        Thread.sleep(300);
 
-        //For good measure, make sure that the tile is in top left corner
-        // (also tests that the borders of quiltboard work valid)
-        for (int i = 0; i < 7; i++ ){
-            gameInput.doMove(Move.MOVE_UP);
-            gameInput.doMove(Move.MOVE_LEFT);
-        }
-        gameInput.doMove(Move.CONFIRM);
-
-        //Exception should have been thrown and asserted by @Test(expected) annotation
+        //Assert that it is still currently in place patch state
+        Assert.assertEquals(GameStateType.PLACE_PATCH, gameController.getState().type);
 
     }
 
-    //Test that an exception is thrown when someone tries to buy a patch without enough buttons
-    @Test(expected = GameException.class)
-    public void testPlacePatchNotEnoughButtons() {
+    //Test when someone tries to buy a patch without enough buttons
+    @Test
+    public void testPlacePatchNotEnoughButtons() throws InterruptedException {
         startingPlayer.nrButtons = 0; // Set nrButtons to 0 so the player cant afford the patch
 
         //Select buy patch
@@ -335,18 +344,19 @@ public class GameFlowTest {
         //Game should not go into the next state, i.e. placing patch
         assertNotSame(gameController.currentState.type, GameStateType.PLACE_PATCH);
 
-        //Assertion for exception should be done by the 'expected' annotation
     }
 
-    @Test(expected = GameException.class)
-    public void testMovePastNextPlayerGameFinished() {
+    @Test
+    public void testBuyPatchGameFinished() throws GameException, InterruptedException {
 
-        //Overwrite gameController game with a finished game
-        game = makeFinishedGame();
-        gameInput.doMove(Move.MOVE_LEFT);
-        gameInput.doMove(Move.CONFIRM);
+        makeFinishedGame();
+        Thread.sleep(300);
+        assertEquals(gameController.currentState.type, GameStateType.FINISHED);
+        //Try to buy a patch
+        selectSecond();
 
-        //Assertion should be done by 'expected' annotation
+        //Assert that state is still finished, i.e. not in pick patch
+        assertEquals(gameController.currentState.type, GameStateType.FINISHED);
     }
 
 

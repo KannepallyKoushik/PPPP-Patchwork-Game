@@ -1,6 +1,9 @@
 //package com.patchwork.app.backend;
 //
-//import com.patchwork.app.backend.Mock.MockScanner;
+//import com.patchwork.app.backend.Exceptions.CanNotAffordException;
+//import com.patchwork.app.backend.Exceptions.GameException;
+//import com.patchwork.app.backend.Inputs.MockGameInput;
+//import org.junit.Before;
 //import org.junit.Test;
 //
 //
@@ -9,11 +12,18 @@
 //
 //
 //public class GameControllerTest {
+//    private GameController gc;
+//    private Thread t;
+//    private MockGameInput gameInput;
 //
+//    @Before
+//    public void setUp(){
+//        gc = new GameController(new MockGameInput());
+//        gameInput = (MockGameInput) gc.input;
+//    }
 //
 //    @Test
 //    public void constructorTest(){
-//        GameController gc = new GameController();
 //        assertNotNull(gc.game);
 //        assertNotNull(gc.textUI);
 //        assertNotNull(gc.currentPlayer);
@@ -22,48 +32,36 @@
 //    }
 //
 //    @Test
-//    public void getNextPlayerTest(){
-//        GameController gc = new GameController();
+//    public void getOtherPlayerTest(){
 //        Player currentPlayer = gc.currentPlayer;
-//        Player nextPlayer = gc.getNextPlayer(currentPlayer);
-//        assertNotEquals(currentPlayer, nextPlayer);
-//        assertEquals(currentPlayer, gc.getNextPlayer(nextPlayer));
+//        Player otherPlayer = gc.getOtherPlayer(currentPlayer);
+//        assertNotEquals(currentPlayer, otherPlayer);
+//        assertEquals(currentPlayer, gc.getOtherPlayer(otherPlayer));
 //    }
 //
 //    @Test
-//    public void pickMoveTest(){
-//        GameController gc = new GameController();
+//    public void pickMoveTest() throws InterruptedException, GameException {
 //
-//
-//        gc.input = new MockGameInput("MOVE");
-//        String action = gc.pickMove(gc.input);
-//        assertEquals("MOVE", action );
-//
-//        gc.input = new MockGameInput("BUY");
-//        String action2 = gc.pickMove(gc.input);
-//        assertEquals("BUY", action2);
+//        boolean pickMove = gc.pickMove();
+//        Thread.sleep(300);
+//        gameInput.updateMove(Move.MOVE_LEFT);
+//        Thread.sleep(300);
+//        gameInput.updateMove(Move.CONFIRM);
+//        Thread.sleep(300);
+//        assertEquals(gc.move, Move.WAITING);
+//        assertTrue(pickMove);
 //    }
 //
 //    @Test
-//    public void pickPatchTest(){
-//        GameController gc = new GameController();
+//    public void pickPatchTest() throws CanNotAffordException, InterruptedException {
 //        gc.currentPlayer.addButtons(100);
+//        Patch patch1 = gc.pickPatch();
+//        gameInput.updateMove(Move.MOVE_LEFT);
+//        Thread.sleep(300);
+//        gameInput.updateMove(Move.CONFIRM);
+//        Thread.sleep(300);
 //
-//        gc.input = new MockGameInput("1");
-//        Patch patch1 = gc.pickPatch(gc.input);
-//
-//        gc.input = new MockGameInput("2");
-//        Patch patch2 = gc.pickPatch(gc.input);
-//
-//        gc.input = new MockGameInput("3");
-//        Patch patch3 = gc.pickPatch(gc.input);
-//
-//        assertNotEquals(patch1, patch2);
-//        assertNotEquals(patch1, patch3);
-//        assertNotEquals(patch2, patch3);
 //        assertNotNull(patch1);
-//        assertNotNull(patch2);
-//        assertNotNull(patch3);
 //
 //        assertEquals(3, patch1.buttonCost);
 //        assertEquals(4, patch1.timeTokenCost);
@@ -71,40 +69,27 @@
 //    }
 //
 //    @Test
-//    public void placePatchTest(){
-//        GameController gc = new GameController();
+//    public void placePatchTest() throws InterruptedException, GameException {
 //        gc.currentPlayer.addButtons(100);
 //        int currentButtons = gc.currentPlayer.nrButtons;
+//        Patch patch1 = gc.game.patchList.getAvailablePatches().get(0);
 //
-//        gc.input = new MockGameInput("1");
-//        Patch patch1 = gc.pickPatch(gc.input);
-//
-//        gc.input = new MockGameInput("PLACE");
-//        gc.placePatch(patch1, gc.input);
-//
+//        boolean placed = gc.placePatch(patch1);
+//        gameInput.updateMove(Move.MOVE_RIGHT);
+//        Thread.sleep(300);
+//        gameInput.updateMove(Move.MOVE_DOWN);
+//        Thread.sleep(300);
+//        gameInput.updateMove(Move.CONFIRM);
+//        Thread.sleep(300);
 //        assertEquals(1, gc.currentPlayer.quiltBoard.patches.size());
 //        assertEquals(currentButtons-patch1.buttonCost, gc.currentPlayer.nrButtons);
+//        assertTrue(gc.currentPlayer.quiltBoard.spaces[1][1]);
 //    }
 //
-//    //If both players only move, then the player who started should win
-//    //Currently doesnt work because some game logic doesnt work
-////    @Test
-////    public void runMoveTest() throws GameException {
-////        GameController gc = new GameController();
-////        gc.input = new MockGameInput("MOVE");
-////        Player initialPlayer = gc.currentPlayer;
-////        gc.run();
-////        assertEquals(initialPlayer, gc.game.result.winner);
-////    }
 //
 //
-//
-//    //TODO
-//    //Implement some tests for run
-//    //Currently not the case due to scanner + while loop making it hard to test, figure something out
-//    @Test
-//    public void runTest(){
-//
-//    }
+//    /*
+//    run is tested in GameFlowTest
+//     */
 //
 //}

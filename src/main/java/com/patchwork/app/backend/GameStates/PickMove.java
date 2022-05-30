@@ -11,9 +11,8 @@ public class PickMove extends GameState {
     public List<Patch> options;
     public TimeBoard timeBoard;
 
-
-    public PickMove(Player player, List<Patch> options, TimeBoard timeBoard){
-        super(player);
+    public PickMove(Player player, QuiltBoard quiltBoard, List<Patch> options, TimeBoard timeBoard ){
+        super(player, quiltBoard);
         this.type = GameStateType.PICK_MOVE;
         this.options = options;
         this.timeBoard = timeBoard;
