@@ -126,11 +126,10 @@ public class GameController implements GameInputObserver, Runnable  {
                 input.run();
             }
             if (move.equals(Move.CONFIRM)) {
-                //Set to waiting so next move starts fresh
-                move = Move.WAITING;
-
                 //Set to true to exit choosing move loop
                 movePicked = true;
+                //Set to waiting so next move starts fresh
+                move = Move.WAITING;
             } else if (move.equals(Move.MOVE_LEFT)) {
                 //This might be redundant, since it is always 0 in this case (unless more options gets added later)
 //                    selectedIndex = Math.max(0, selectedIndex - 1);
@@ -264,7 +263,6 @@ public class GameController implements GameInputObserver, Runnable  {
                 System.out.println("Please enter a valid command");
             }
         }
-        System.out.println("hierz");
         System.out.println(placed);
         return placed;
     }

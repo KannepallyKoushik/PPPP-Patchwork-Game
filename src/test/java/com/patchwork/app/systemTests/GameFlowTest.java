@@ -96,7 +96,6 @@ public class GameFlowTest {
         doMove(Move.MOVE_LEFT);
         doMove(Move.MOVE_LEFT);
         doMove(Move.CONFIRM);
-        Thread.sleep(100);
     }
 
     //Second is selecting to buy a patch, or buying the second patch
@@ -105,7 +104,6 @@ public class GameFlowTest {
         doMove(Move.MOVE_LEFT);
         doMove(Move.MOVE_RIGHT);
         doMove(Move.CONFIRM);
-        Thread.sleep(100);
     }
 
 
@@ -165,7 +163,6 @@ public class GameFlowTest {
         selectFirst();
 
 
-        Thread.sleep(500);
         // Check Player2 is now current player, as they are the furthest behind
         assertEquals(gameController.currentPlayer.name, nextPlayer.name);
     }
@@ -192,12 +189,10 @@ public class GameFlowTest {
 
         // Select 'buy a patch'
         selectSecond();
-        Thread.sleep(1000);
         Assert.assertEquals(GameStateType.PICK_PATCH, gameController.getState().type);
 
         // Pick the first patch
         selectFirst();
-        Thread.sleep(1000);
         Assert.assertEquals(GameStateType.PLACE_PATCH, gameController.getState().type);
 
         // Make sure that the right patch was selected
@@ -206,15 +201,10 @@ public class GameFlowTest {
 
         // Move the patch a few times and then place it
         doMove(Move.MOVE_RIGHT);
-        Thread.sleep(100);
         doMove(Move.MOVE_RIGHT);
-        Thread.sleep(100);
         doMove(Move.MOVE_RIGHT);
-        Thread.sleep(100);
         doMove(Move.MOVE_DOWN);
-        Thread.sleep(100);
         doMove(Move.CONFIRM);
-        Thread.sleep(100);
 
 
         //Assert that currentPlayer in the game has now changed
@@ -306,26 +296,22 @@ public class GameFlowTest {
         Assert.assertEquals(GameStateType.PLACE_PATCH, gameController.getState().type);
         //Place the patch and go to next player turn
         doMove(Move.CONFIRM);
-        Thread.sleep(100);
 
         //Assert now it is next player turn
         assertEquals(gameController.currentPlayer, gameController.getOtherPlayer(startingPlayer));
 
         //Let next player move just to skip turn
         selectFirst();
-        Thread.sleep(100);
         //assert it is again starting player turn
         assertEquals(gameController.currentPlayer, startingPlayer);
 
         //Repeat turn again, i.e.:
         // Select 'buy a patch'
         selectSecond();
-        Thread.sleep(100);
         Assert.assertEquals(GameStateType.PICK_PATCH, gameController.getState().type);
 
         // Pick the first patch
         selectFirst();
-        Thread.sleep(100);
         Assert.assertEquals(GameStateType.PLACE_PATCH, gameController.getState().type);
         doMove(Move.CONFIRM);
 
@@ -354,7 +340,6 @@ public class GameFlowTest {
     public void testBuyPatchGameFinished() throws GameException, InterruptedException {
 
         makeFinishedGame();
-        Thread.sleep(100);
         assertEquals(gameController.currentState.type, GameStateType.FINISHED);
         //Try to buy a patch
         selectSecond();
