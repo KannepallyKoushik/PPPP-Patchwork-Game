@@ -148,4 +148,12 @@ public class QuiltBoard {
         }
         return emptySpaces;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        QuiltBoard that = (QuiltBoard) o;
+        return Arrays.deepEquals(spaces, that.spaces);
+    }
 }

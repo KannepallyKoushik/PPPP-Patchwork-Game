@@ -25,7 +25,7 @@ public class AbstractGameTest {
 
     protected ByteArrayOutputStream tuiOutput;
 
-    private void createAndSetGame(GameFactory gameFactory, GameControllerFactory gameControllerFactory) {
+    private void createAndSetGame(GameControllerFactory gameControllerFactory) {
         gameController = gameControllerFactory.createGameController();
         game = gameControllerFactory.getGame();
         gameInput = (MockGameInput) gameControllerFactory.getGameInput();
@@ -35,11 +35,7 @@ public class AbstractGameTest {
 
         if (gameControllerThread != null) {
             gameController.stop();
-            try {
-                gameControllerThread.join();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            gameControllerThread.stop();
         }
         gameControllerThread = new Thread(gameController);
         gameControllerThread.start();
@@ -50,7 +46,7 @@ public class AbstractGameTest {
         // Create game
         GameFactory gameFactory = new GameFactory();
         GameControllerFactory gameControllerFactory = new MockGameControllerFactory(gameFactory);
-        createAndSetGame(gameFactory, gameControllerFactory);
+        createAndSetGame(gameControllerFactory);
 
         // Disable TUI prints
         originalSysOut = System.out;
@@ -64,7 +60,7 @@ public class AbstractGameTest {
         System.setOut(originalSysOut);
 
         gameController.stop();
-        gameControllerThread.join();
+        gameControllerThread.stop();
     }
 
     public void createGameWithPatchList(List<Patch> patches) {
@@ -72,6 +68,6 @@ public class AbstractGameTest {
         gameFactory.setPatchListFactory(new MockPatchListFactory(patches));
         GameControllerFactory gameControllerFactory = new MockGameControllerFactory(gameFactory);
 
-        createAndSetGame(gameFactory, gameControllerFactory);
+        createAndSetGame(gameControllerFactory);
     }
 }

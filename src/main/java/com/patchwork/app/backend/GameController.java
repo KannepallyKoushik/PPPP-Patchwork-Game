@@ -3,12 +3,12 @@ package com.patchwork.app.backend;
 import com.patchwork.app.backend.Exceptions.CanNotAffordException;
 import com.patchwork.app.backend.Exceptions.GameException;
 import com.patchwork.app.backend.GameStates.*;
-import com.patchwork.app.backend.Inputs.*;
+import com.patchwork.app.backend.Inputs.GameInput;
 import com.patchwork.app.frontend.TUI;
 
 import java.util.Random;
 
-public class GameController implements GameInputObserver, Runnable  {
+public class GameController implements GameInputObserver, Runnable {
     TUI textUI;
     public Game game;
 
@@ -25,8 +25,6 @@ public class GameController implements GameInputObserver, Runnable  {
     private boolean turnFinished = false;
     public Move move = Move.WAITING;
 
-    private int gameLoopCounter = 0;
-
     public GameController(Game game, TUI textUI, GameInput gameInput) {
         this.game = game;
         this.textUI = textUI;
@@ -34,7 +32,6 @@ public class GameController implements GameInputObserver, Runnable  {
         this.gameInput.subscribe(this);
         currentPlayer = game.players.get(new Random().nextInt(game.players.size()));
     }
-
 
     public void start() throws GameException, InterruptedException {
 
@@ -75,7 +72,7 @@ public class GameController implements GameInputObserver, Runnable  {
                         //Now start logic for placing a patch
                         try {
                             patchPlaced = placePatch(selectedPatch);
-                        } catch (GameException e){
+                        } catch (GameException e) {
                             System.out.println(e.getMessage());
                         }
                     }
@@ -94,8 +91,6 @@ public class GameController implements GameInputObserver, Runnable  {
         /*
         textUI.drawResult(game.result);
         */
-        gameLoopCounter += 1;
-        System.out.println(gameLoopCounter);
     }
 
     /**
@@ -103,30 +98,6 @@ public class GameController implements GameInputObserver, Runnable  {
      */
     public void stop() {
         isFinished = true;
-    }
-
-    /**
-     * Waits until the next game cycle has executed.
-     */
-    public void waitNextCycle() {
-        int initialCounter = gameLoopCounter;
-        while (gameLoopCounter == initialCounter) {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                throw new RuntimeException("Failed to await next game cycle");
-            }
-        }
-    }
-
-
-    //Helper function to determine opponent player
-    public Player getOtherPlayer(Player player) {
-        int index = game.players.indexOf(player);
-        if (index + 1 == game.players.size()) {
-            return game.players.get(0);
-        }
-        return game.players.get(index + 1);
     }
 
 
@@ -146,7 +117,7 @@ public class GameController implements GameInputObserver, Runnable  {
             }
 
             System.out.println("Change your selection by typing LEFT or RIGHT, or confirm with CONFIRM");
-            while(move.equals(Move.WAITING)){
+            while (move.equals(Move.WAITING)) {
                 Thread.sleep(50);
                 gameInput.run();
             }
@@ -211,7 +182,7 @@ public class GameController implements GameInputObserver, Runnable  {
                 System.out.println("Please choose your patch by typing LEFT or RIGHT or CONFIRM");
                 System.out.println("You are currently choosing the " + patchIndex + " patch.");
 
-                while(move.equals(Move.WAITING)){
+                while (move.equals(Move.WAITING)) {
                     Thread.sleep(50);
                     gameInput.run();
                 }
@@ -256,11 +227,11 @@ public class GameController implements GameInputObserver, Runnable  {
             currentState = new PlacePatch(currentPlayer, currentPlayer.quiltBoard, selectedPatch, x, y);
             textUI.drawQuiltBoardWithPatch(currentPlayer.quiltBoard, selectedPatch, x, y);
             System.out.println("Please place your patch, with either LEFT RIGHT UP DOWN or CONFIRM");
-            while(move.equals(Move.WAITING)){
+            while (move.equals(Move.WAITING)) {
                 Thread.sleep(50);
                 gameInput.run();
             }
-            System.out.println("MOVE: "+ move);
+            System.out.println("MOVE: " + move);
             if (move.equals(Move.CONFIRM)) {
                 //Set to waiting so next move starts fresh
                 move = Move.WAITING;
