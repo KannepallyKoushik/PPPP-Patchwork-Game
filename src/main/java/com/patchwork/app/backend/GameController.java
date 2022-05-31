@@ -60,7 +60,6 @@ public class GameController implements GameInputObserver, Runnable  {
             while (!moveConfirmed) {
                 moveConfirmed = pickMove();
             }
-            Thread.sleep(100);
             //Loop for picking & placing a patch
             Patch selectedPatch = null;
             boolean patchPlaced = false;
@@ -123,7 +122,7 @@ public class GameController implements GameInputObserver, Runnable  {
 
             System.out.println("Change your selection by typing LEFT or RIGHT, or confirm with CONFIRM");
             while(move.equals(Move.WAITING)){
-                Thread.sleep(100);
+                Thread.sleep(50);
                 input.run();
             }
             if (move.equals(Move.CONFIRM)) {
@@ -189,7 +188,7 @@ public class GameController implements GameInputObserver, Runnable  {
                 System.out.println("You are currently choosing the " + patchIndex + " patch.");
 
                 while(move.equals(Move.WAITING)){
-                    Thread.sleep(100);
+                    Thread.sleep(50);
                     input.run();
                 }
                 if (move.equals(Move.CONFIRM)) {
@@ -234,7 +233,7 @@ public class GameController implements GameInputObserver, Runnable  {
             textUI.drawQuiltBoardWithPatch(currentPlayer.quiltBoard, selectedPatch, x, y);
             System.out.println("Please place your patch, with either LEFT RIGHT UP DOWN or CONFIRM");
             while(move.equals(Move.WAITING)){
-                Thread.sleep(100);
+                Thread.sleep(50);
                 input.run();
             }
             System.out.println("MOVE: "+ move);

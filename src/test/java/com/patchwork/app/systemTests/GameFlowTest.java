@@ -4,7 +4,6 @@ import com.patchwork.app.backend.*;
 import com.patchwork.app.backend.Exceptions.GameException;
 import com.patchwork.app.backend.GameStates.GameStateType;
 import com.patchwork.app.backend.GameStates.PlacePatch;
-import com.patchwork.app.backend.Inputs.GameInput;
 import com.patchwork.app.backend.Inputs.MockGameInput;
 import org.junit.After;
 import org.junit.Assert;
@@ -61,47 +60,52 @@ public class GameFlowTest {
     //Method used in moving past a player after a finished game
     private void makeFinishedGame() throws GameException, InterruptedException {
         game.timeBoard.movePlayer(nextPlayer, 51);
-        gameInput.updateMove(Move.MOVE_LEFT);
-        Thread.sleep(300);
-        gameInput.updateMove(Move.CONFIRM);
-        Thread.sleep(300);
+        doMove(Move.MOVE_LEFT);
+        Thread.sleep(100);
+        doMove(Move.CONFIRM);
+        Thread.sleep(100);
         if (!game.isFinished()) {
             throw new RuntimeException("Created game is not finished");
         }
     }
 
 
-    //Simple helper methods to facilitate choosing a specific option
-    //Left most is either choosing to move the player, or buying the 1st tile
-    //Move left first to make sure that the selected option remains the left most option
+
 
     /*
-    TODO
-     Done in a not-that-well programmed manner, i.e. using sleeps as opposed to making sure the threads run nicely separately
-     Could be done in the future if there is time
+    Method to actually do a move in the gamecontroller
+    Has some checks to make sure that moves are done in correct sequence, i.e. wait until gameController is available
+    (Move.WAITING state means gameController can do something)
      */
 
+    private void doMove(Move move) throws InterruptedException {
+        while (gameController.move != Move.WAITING) {
+            Thread.sleep(100);
+        }
+        System.out.println(gameController.move);
+        gameInput.updateMove(move);
+        Thread.sleep(100);
+    }
+
+    /*
+    Simple helper methods to facilitate choosing a specific option
+    Left most is either choosing to move the player, or buying the 1st tile
+    Move left first to make sure that the selected option remains the left most option
+     */
     private void selectFirst() throws InterruptedException {
-        Thread.sleep(300);
-        gameInput.updateMove(Move.MOVE_LEFT);
-        Thread.sleep(300);
-        gameInput.updateMove(Move.MOVE_LEFT);
-        Thread.sleep(300);
-        gameInput.updateMove(Move.CONFIRM);
-        Thread.sleep(300);
+        doMove(Move.MOVE_LEFT);
+        doMove(Move.MOVE_LEFT);
+        doMove(Move.CONFIRM);
+        Thread.sleep(100);
     }
 
     //Second is selecting to buy a patch, or buying the second patch
     private void selectSecond() throws InterruptedException {
-        Thread.sleep(300);
-        gameInput.updateMove(Move.MOVE_LEFT);
-        Thread.sleep(300);
-        gameInput.updateMove(Move.MOVE_LEFT);
-        Thread.sleep(300);
-        gameInput.updateMove(Move.MOVE_RIGHT);
-        Thread.sleep(300);
-        gameInput.updateMove(Move.CONFIRM);
-        Thread.sleep(300);
+        doMove(Move.MOVE_LEFT);
+        doMove(Move.MOVE_LEFT);
+        doMove(Move.MOVE_RIGHT);
+        doMove(Move.CONFIRM);
+        Thread.sleep(100);
     }
 
 
@@ -161,6 +165,7 @@ public class GameFlowTest {
         selectFirst();
 
 
+        Thread.sleep(500);
         // Check Player2 is now current player, as they are the furthest behind
         assertEquals(gameController.currentPlayer.name, nextPlayer.name);
     }
@@ -200,17 +205,17 @@ public class GameFlowTest {
         Assert.assertEquals(selectedPatch, ((PlacePatch) gameController.getState()).patch);
 
         // Move the patch a few times and then place it
-        gameInput.updateMove(Move.MOVE_RIGHT);
-        Thread.sleep(300);
-        gameInput.updateMove(Move.MOVE_RIGHT);
-        Thread.sleep(300);
-        gameInput.updateMove(Move.MOVE_RIGHT);
-        Thread.sleep(300);
-        gameInput.updateMove(Move.MOVE_DOWN);
-        Thread.sleep(300);
-        gameInput.updateMove(Move.CONFIRM);
+        doMove(Move.MOVE_RIGHT);
+        Thread.sleep(100);
+        doMove(Move.MOVE_RIGHT);
+        Thread.sleep(100);
+        doMove(Move.MOVE_RIGHT);
+        Thread.sleep(100);
+        doMove(Move.MOVE_DOWN);
+        Thread.sleep(100);
+        doMove(Move.CONFIRM);
+        Thread.sleep(100);
 
-        Thread.sleep(500);
 
         //Assert that currentPlayer in the game has now changed
         Assert.assertNotEquals(startingPlayer, game.timeBoard.getCurrentPlayer());
@@ -300,30 +305,29 @@ public class GameFlowTest {
         //Should now be in placing patch state
         Assert.assertEquals(GameStateType.PLACE_PATCH, gameController.getState().type);
         //Place the patch and go to next player turn
-        gameInput.updateMove(Move.CONFIRM);
-        Thread.sleep(300);
+        doMove(Move.CONFIRM);
+        Thread.sleep(100);
 
         //Assert now it is next player turn
         assertEquals(gameController.currentPlayer, gameController.getOtherPlayer(startingPlayer));
 
         //Let next player move just to skip turn
         selectFirst();
-        Thread.sleep(300);
+        Thread.sleep(100);
         //assert it is again starting player turn
         assertEquals(gameController.currentPlayer, startingPlayer);
 
         //Repeat turn again, i.e.:
         // Select 'buy a patch'
         selectSecond();
-        Thread.sleep(300);
+        Thread.sleep(100);
         Assert.assertEquals(GameStateType.PICK_PATCH, gameController.getState().type);
 
         // Pick the first patch
         selectFirst();
-        Thread.sleep(300);
+        Thread.sleep(100);
         Assert.assertEquals(GameStateType.PLACE_PATCH, gameController.getState().type);
-        gameInput.updateMove(Move.CONFIRM);
-        Thread.sleep(300);
+        doMove(Move.CONFIRM);
 
         //Assert that it is still currently in place patch state
         Assert.assertEquals(GameStateType.PLACE_PATCH, gameController.getState().type);
@@ -350,7 +354,7 @@ public class GameFlowTest {
     public void testBuyPatchGameFinished() throws GameException, InterruptedException {
 
         makeFinishedGame();
-        Thread.sleep(300);
+        Thread.sleep(100);
         assertEquals(gameController.currentState.type, GameStateType.FINISHED);
         //Try to buy a patch
         selectSecond();
