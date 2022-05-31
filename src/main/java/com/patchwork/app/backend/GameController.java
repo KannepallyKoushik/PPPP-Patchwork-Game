@@ -18,19 +18,21 @@ public class GameController implements GameInputObserver, Runnable  {
 
     //realScanner is an actual System.in scanner, as opposed to a mock scanner used in the tests
     //Hopefully this will be gone when gameInput & states is working
-    public GameInput input;
+    public GameInput gameInput;
 
     public GameState currentState;
     public boolean isFinished = false;
     private boolean turnFinished = false;
     public Move move = Move.WAITING;
 
-    public GameController(GameInput gameInput) {
-        game = new Game();
-        textUI = new TUI(game);
+    private int gameLoopCounter = 0;
+
+    public GameController(Game game, TUI textUI, GameInput gameInput) {
+        this.game = game;
+        this.textUI = textUI;
+        this.gameInput = gameInput;
+        this.gameInput.subscribe(this);
         currentPlayer = game.players.get(new Random().nextInt(game.players.size()));
-        input = gameInput;
-        input.subscribe(this);
     }
 
 
@@ -93,6 +95,29 @@ public class GameController implements GameInputObserver, Runnable  {
         /*
         textUI.drawResult(game.result);
         */
+        gameLoopCounter += 1;
+        System.out.println(gameLoopCounter);
+    }
+
+    /**
+     * Causes the game loop to exit on the next cycle.
+     */
+    public void stop() {
+        isFinished = true;
+    }
+
+    /**
+     * Waits until the next game cycle has executed.
+     */
+    public void waitNextCycle() {
+        int initialCounter = gameLoopCounter;
+        while (gameLoopCounter == initialCounter) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Failed to await next game cycle");
+            }
+        }
     }
 
 
@@ -124,7 +149,7 @@ public class GameController implements GameInputObserver, Runnable  {
             System.out.println("Change your selection by typing LEFT or RIGHT, or confirm with CONFIRM");
             while(move.equals(Move.WAITING)){
                 Thread.sleep(100);
-                input.run();
+                gameInput.run();
             }
             if (move.equals(Move.CONFIRM)) {
                 //Set to waiting so next move starts fresh
@@ -190,7 +215,7 @@ public class GameController implements GameInputObserver, Runnable  {
 
                 while(move.equals(Move.WAITING)){
                     Thread.sleep(100);
-                    input.run();
+                    gameInput.run();
                 }
                 if (move.equals(Move.CONFIRM)) {
                     currentPatch = game.patchList.getAvailablePatches().get(patchIndex);
@@ -235,7 +260,7 @@ public class GameController implements GameInputObserver, Runnable  {
             System.out.println("Please place your patch, with either LEFT RIGHT UP DOWN or CONFIRM");
             while(move.equals(Move.WAITING)){
                 Thread.sleep(100);
-                input.run();
+                gameInput.run();
             }
             System.out.println("MOVE: "+ move);
             if (move.equals(Move.CONFIRM)) {

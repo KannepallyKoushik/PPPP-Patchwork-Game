@@ -1,20 +1,19 @@
 package com.patchwork.app.systemTests;
 
-import com.patchwork.app.backend.*;
 import com.patchwork.app.backend.Exceptions.GameException;
 import com.patchwork.app.backend.GameStates.GameStateType;
 import com.patchwork.app.backend.GameStates.PlacePatch;
-import com.patchwork.app.backend.Inputs.GameInput;
-import com.patchwork.app.backend.Inputs.MockGameInput;
-import org.junit.After;
+import com.patchwork.app.backend.Move;
+import com.patchwork.app.backend.Patch;
+import com.patchwork.app.backend.Player;
+import com.patchwork.app.backend.QuiltBoard;
+import com.patchwork.app.testUtils.AbstractGameTest;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 
 //TEST CASES
@@ -30,16 +29,9 @@ import static org.junit.Assert.assertEquals;
 // [x] Trying to buy a patch when game is finished should fail  testBuyPatchGameFinished
 
 
-public class GameFlowTest {
+public class GameFlowTest extends AbstractGameTest {
 
-    Game game;
-    GameController gameController;
-    MockGameInput gameInput;
-    Player startingPlayer;
-    Player nextPlayer;
     public static final int DEFAULT_NR_BUTTONS = 5;
-    Thread t;
-
 
     private static Patch makeSevenBySevenPatch() {
         return new Patch(
@@ -81,45 +73,29 @@ public class GameFlowTest {
      Could be done in the future if there is time
      */
 
-    private void selectFirst() throws InterruptedException {
-        Thread.sleep(300);
-        gameInput.updateMove(Move.MOVE_LEFT);
-        Thread.sleep(300);
-        gameInput.updateMove(Move.MOVE_LEFT);
-        Thread.sleep(300);
-        gameInput.updateMove(Move.CONFIRM);
-        Thread.sleep(300);
+    private void executeMoves(Move... moves) {
+        for (Move move : moves) {
+            gameInput.updateMove(move);
+            gameController.waitNextCycle();
+        }
+    }
+
+    private void selectFirst() {
+        executeMoves(
+                Move.MOVE_LEFT,
+                Move.MOVE_LEFT,
+                Move.CONFIRM
+        );
     }
 
     //Second is selecting to buy a patch, or buying the second patch
-    private void selectSecond() throws InterruptedException {
-        Thread.sleep(300);
-        gameInput.updateMove(Move.MOVE_LEFT);
-        Thread.sleep(300);
-        gameInput.updateMove(Move.MOVE_LEFT);
-        Thread.sleep(300);
-        gameInput.updateMove(Move.MOVE_RIGHT);
-        Thread.sleep(300);
-        gameInput.updateMove(Move.CONFIRM);
-        Thread.sleep(300);
-    }
-
-
-    //Make sure every test states with clean gameController and everything included
-    @Before
-    public void setUp() {
-        gameController = new GameController(new MockGameInput());
-        gameInput = (MockGameInput) gameController.input;
-        game = gameController.game;
-        startingPlayer = gameController.currentPlayer;
-        nextPlayer = gameController.getOtherPlayer(startingPlayer);
-        t = new Thread(gameController);
-        t.start();
-    }
-
-    @After
-    public void tearDown() {
-        t.stop();
+    private void selectSecond() {
+        executeMoves(
+                Move.MOVE_LEFT,
+                Move.MOVE_LEFT,
+                Move.MOVE_RIGHT,
+                Move.CONFIRM
+        );
     }
 
 
@@ -292,7 +268,7 @@ public class GameFlowTest {
         startingPlayer.addButtons(1000);
 
         // Select 'buy a patch'
-        selectSecond();
+        selectFirst();
         Assert.assertEquals(GameStateType.PICK_PATCH, gameController.getState().type);
 
         // Pick the first patch

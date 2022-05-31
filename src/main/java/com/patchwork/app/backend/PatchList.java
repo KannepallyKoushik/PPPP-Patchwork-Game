@@ -9,11 +9,8 @@ public class PatchList {
     private final ArrayList<Patch> patches;
     private int neutralTokenPosition;
 
-    public PatchList() {
-        PatchFactory pf = new PatchFactory();
-        pf.createTimeBoardPatches();
-
-        this.patches = pf.getPatches();
+    public PatchList(ArrayList<Patch> patches) {
+        this.patches = patches;
         this.neutralTokenPosition = 0;
     }
 
@@ -37,15 +34,12 @@ public class PatchList {
 
     public void removePatch(Patch patch) {
         if (!getAvailablePatches().contains(patch)) {
-//            throw new RuntimeException("Patch is not present in patch list");
-        } else{
+            throw new RuntimeException("Patch is not present in patch list");
+        } else {
             int patchIndex = patches.indexOf(patch);
             patches.remove(patchIndex);
 
             neutralTokenPosition = patchIndex;
         }
-
-
-
     }
 }
