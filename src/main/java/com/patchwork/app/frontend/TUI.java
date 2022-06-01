@@ -99,6 +99,8 @@ public class TUI {
         for(int i = 0; i < 3; i++) {
             System.out.print("              ");
             for(Patch patch : patches) {
+                System.out.print(i == selected ? ConsoleColor.GREEN : ConsoleColor.WHITE);
+
                 this.drawPatchLine(patch, i);
 
                 System.out.print("  ");
