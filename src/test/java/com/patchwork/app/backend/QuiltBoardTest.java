@@ -66,9 +66,9 @@ public class QuiltBoardTest {
 //        Assert.assertFalse(quiltBoard.hasSevenBySeven());
 
         //Now make it a 7x7 full true matrix == true
-        for (int i = 0; i < 7; i++){
-            for (int j = 0; j < 7; j++){
-                quiltBoard.spaces[i][j] =  true;
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
+                quiltBoard.spaces[i][j] = true;
             }
         }
         Assert.assertTrue(quiltBoard.hasSevenBySeven());
@@ -81,20 +81,20 @@ public class QuiltBoardTest {
 
         //Add it back in, should be back to == true
         for (int i = 0; i < quiltBoard.spaces[6].length; i++) {
-            quiltBoard.spaces[6][i] =  true;
+            quiltBoard.spaces[6][i] = true;
         }
         Assert.assertTrue(quiltBoard.hasSevenBySeven());
 
         //Because we now want to remove column 6 instead, had to ensure that this is solely because of this removed column == false
         for (int i = 0; i < quiltBoard.spaces.length; i++) {
-            quiltBoard.spaces[i][6] =  false;
+            quiltBoard.spaces[i][6] = false;
         }
         Assert.assertFalse(quiltBoard.hasSevenBySeven());
 
 
         //Final test, put it back to true and remove 1 space in the middle of the board
         for (int i = 0; i < quiltBoard.spaces.length; i++) {
-            quiltBoard.spaces[i][6] =  true;
+            quiltBoard.spaces[i][6] = true;
         }
         Assert.assertTrue(quiltBoard.hasSevenBySeven());
 
@@ -114,31 +114,46 @@ public class QuiltBoardTest {
         Patch testPatch = patchFactory.getPatches().get(0);
         quiltBoard.placePatch(testPatch, 0, 0);
 
-        Assert.assertEquals(81-quiltBoard.patchToCoords(testPatch).size(), quiltBoard.countEmpty());
+        Assert.assertEquals(81 - quiltBoard.patchToCoords(testPatch).size(), quiltBoard.countEmpty());
 
         //Now make it a 9x9 full true matrix == true
-        for (int i = 0; i < quiltBoard.spaces.length; i++){
-            for (int j = 0; j < quiltBoard.spaces[i].length; j++){
-                quiltBoard.spaces[i][j] =  true;
+        for (int i = 0; i < quiltBoard.spaces.length; i++) {
+            for (int j = 0; j < quiltBoard.spaces[i].length; j++) {
+                quiltBoard.spaces[i][j] = true;
             }
         }
         Assert.assertEquals(0, quiltBoard.countEmpty());
     }
 
     @Test
-    public void patchToCoordsTest(){
+    public void patchToCoordsTest() {
         QuiltBoard quiltBoard = new QuiltBoard();
         PatchFactory patchFactory = new PatchFactory();
         Patch testPatch = patchFactory.getPatches().get(0);
 
         int testPatchTrues = 0;
-        for (int i = 0; i < testPatch.spaces.size(); i++ ){
-            for (int j = 0; j < testPatch.spaces.get(i).size(); j++){
-                if (testPatch.spaces.get(i).get(j)){
-                    testPatchTrues +=1;
+        for (int i = 0; i < testPatch.spaces.size(); i++) {
+            for (int j = 0; j < testPatch.spaces.get(i).size(); j++) {
+                if (testPatch.spaces.get(i).get(j)) {
+                    testPatchTrues += 1;
                 }
             }
         }
         Assert.assertEquals(testPatchTrues, quiltBoard.patchToCoords(testPatch).size());
+    }
+
+    @Test
+    public void getNrRewardButtonsTest() throws GameException {
+        QuiltBoard quiltBoard = new QuiltBoard();
+        PatchFactory patchFactory = new PatchFactory();
+        Patch testPatch = patchFactory.getPatches().get(0);
+
+        Assert.assertEquals(0, quiltBoard.getNrRewardButtons());
+
+        quiltBoard.placePatch(testPatch, 0, 0);
+        Assert.assertEquals(testPatch.buttonScore, quiltBoard.getNrRewardButtons());
+
+        quiltBoard.placePatch(testPatch, 4, 4);
+        Assert.assertEquals(testPatch.buttonScore * 2, quiltBoard.getNrRewardButtons());
     }
 }

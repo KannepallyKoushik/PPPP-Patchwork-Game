@@ -51,11 +51,11 @@ public class AbstractGameTest {
         // Disable TUI prints
         originalSysOut = System.out;
         tuiOutput = new ByteArrayOutputStream();
-//        System.setOut(new PrintStream(tuiOutput));
+        System.setOut(new PrintStream(tuiOutput));
     }
 
     @After
-    public void tearDown() throws InterruptedException {
+    public void tearDown() {
         // Set system out back to default
         System.setOut(originalSysOut);
 

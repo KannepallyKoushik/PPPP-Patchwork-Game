@@ -9,6 +9,9 @@ import java.util.List;
 
 public class QuiltBoard {
 
+    public static final int DIM_X = 9;
+    public static final int DIM_Y = 9;
+
     public Boolean  spaces[][];
     public List<Patch> patches;
 
@@ -16,8 +19,8 @@ public class QuiltBoard {
     //Constructor
     public QuiltBoard() {
         this.spaces = new Boolean[9][9];
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
+        for (int i = 0; i < DIM_X; i++) {
+            for (int j = 0; j < DIM_Y; j++) {
                 this.spaces[i][j] = false;
             }
         }
@@ -55,7 +58,7 @@ public class QuiltBoard {
     public boolean canPlace(Patch patch, int x, int y) throws GameException {
         List<List<Integer>> patchCoordinates = patchToCoords(patch);
         //Now check if all these coordinates are available, starting from (x,y)
-        if (x < 0 || y < 0 || x > 8 || y > 8){
+        if (x < 0 || y < 0 || x >= DIM_X || y >= DIM_Y){
             throw new GameException("Can not place in specified location");
         }
         for (List<Integer> patchCoordinate : patchCoordinates) {
@@ -150,8 +153,8 @@ public class QuiltBoard {
 
     public int countEmpty(){
         int emptySpaces = 0;
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
+        for (int i = 0; i < DIM_X; i++) {
+            for (int j = 0; j < DIM_Y; j++) {
                 if(spaces[i][j] == false){
                     emptySpaces += 1;
                 }

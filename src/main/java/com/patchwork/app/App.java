@@ -18,6 +18,6 @@ public class App
 
         // TODO: maybe do something with arguments, launch the game
         GameController gc = new GameControllerFactory(new GameFactory()).createGameController();
-        gc.start();
+        gc.run();
     }
 }

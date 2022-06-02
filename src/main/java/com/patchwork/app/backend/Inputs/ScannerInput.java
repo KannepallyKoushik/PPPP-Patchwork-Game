@@ -7,16 +7,19 @@ import java.util.Scanner;
 
 public class ScannerInput extends GameInput {
 
-    private Scanner s;
+    private final Scanner scanner;
+
+    public ScannerInput() {
+        scanner = new Scanner(System.in);
+    }
 
     @Override
     public void run() {
-        s = new Scanner(System.in);
-        String input = s.nextLine();
-        notify(getMoveFromInput(input));
-
+        while (true) {
+            String input = scanner.nextLine();
+            notify(getMoveFromInput(input));
+        }
     }
-
 
     public Move getMoveFromInput(String input) {
         if (input.equals("CONFIRM")) {

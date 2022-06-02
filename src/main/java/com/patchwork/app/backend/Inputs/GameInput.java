@@ -18,7 +18,6 @@ public abstract class GameInput implements Runnable {
         observers = new ArrayList<>();
     }
 
-
     public void notify(Move move) {
         for (GameInputObserver observer : observers) {
             observer.update(move);

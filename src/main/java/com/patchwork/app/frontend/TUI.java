@@ -26,6 +26,10 @@ public class TUI {
         // TODO: implement
     }
 
+    public void drawMessage(String message) {
+        System.out.println(message);
+    }
+
     public void drawPlacePatchState(PlacePatch gameState) {
         this.drawQuiltBoardWithPatch(gameState.player.quiltBoard,
                 gameState.patch,
@@ -35,13 +39,13 @@ public class TUI {
 
     public void drawPickPatchState(PickPatch gameState) {
         this.drawQuiltBoard(gameState.player.quiltBoard);
-        this.drawPatches(gameState.options, gameState.selectedPatch);
+        this.drawPatches(gameState.options, gameState.options.indexOf(gameState.selectedPatch));
     }
 
     public void drawPickMoveState(PickMove gameState) {
         this.drawTimeBoard();
         this.drawQuiltBoard(gameState.player.quiltBoard);
-        this.drawPatches(gameState.options, -1);
+        this.drawPatches(gameState.patchOptions, -1);
     }
 
     public void drawQuiltBoard(QuiltBoard quiltBoard) {

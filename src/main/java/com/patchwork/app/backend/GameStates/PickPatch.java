@@ -2,23 +2,33 @@ package com.patchwork.app.backend.GameStates;
 
 import com.patchwork.app.backend.Patch;
 import com.patchwork.app.backend.Player;
-import com.patchwork.app.backend.QuiltBoard;
+import com.patchwork.app.frontend.TUI;
 
 import java.util.List;
 
-public class PickPatch extends GameState  {
+public class PickPatch extends GameState {
+
+    public Player player;
     public List<Patch> options;
-    public int selectedPatch;
+    public Patch selectedPatch;
 
+    public PickPatch(Player player, List<Patch> options, Patch selectedPatch) {
+        super();
 
-    public PickPatch(Player player, QuiltBoard quiltBoard, List<Patch> options, int selectedPatch ){
-        super(player, quiltBoard);
         this.player = player;
         this.type = GameStateType.PICK_PATCH;
         this.options = options;
         this.selectedPatch = selectedPatch;
-
     }
 
+    @Override
+    public void draw(TUI tui) {
+        tui.drawPickPatchState(this);
+    }
 
+    @Override
+    public void drawInstructions(TUI tui) {
+        tui.drawMessage("Please choose your patch by typing LEFT or RIGHT or CONFIRM");
+        tui.drawMessage("You are currently choosing the " + options.indexOf(selectedPatch) + " patch.");
+    }
 }

@@ -54,27 +54,4 @@ public class PlayerTest {
         Assert.assertEquals(5+10-testPatch.buttonCost - testPatch2.buttonCost, player.nrButtons);
 
     }
-
-    @Test
-    public void addPatchButtons() throws GameException {
-        Player player = new Player("Test");
-        PatchFactory patchFactory = new PatchFactory();
-
-        //Make 2 test patches
-        Patch testPatch = patchFactory.getPatches().get(0);
-        Patch testPatch2 = patchFactory.getPatches().get(1);
-
-        //Add 1 patch, and add buttons. Then see if final count = 5 + cost + score
-        player.placePatch(testPatch, 0, 0);
-        player.addPatchButtons();
-        Assert.assertEquals(5-testPatch.buttonCost+testPatch.buttonScore, player.nrButtons);
-
-        //Reset buttons, then add second patch to see if this also remains consistent with multiple patches
-        player.nrButtons = 5;
-        player.placePatch(testPatch2, 0, 2);
-        player.addPatchButtons();
-        Assert.assertEquals(5-testPatch2.buttonCost+testPatch.buttonScore + testPatch2.buttonScore, player.nrButtons);
-    }
-
-
 }

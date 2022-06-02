@@ -66,19 +66,8 @@ public class GameFlowTest extends AbstractGameTest {
 
     private void executeMoves(Move... moves) {
         for (Move move : moves) {
-            try {
-                while (gameController.move != Move.WAITING) {
-                    Thread.sleep(100);
-                }
-                System.out.println(gameController.move);
-                gameInput.updateMove(move);
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                if (!game.isFinished()) {
-                    throw new RuntimeException("Failed to wait for GameController to process move");
-                }
-            }
-
+            gameInput.updateMove(move);
+            gameController.waitUntilNextGameCycle();
         }
     }
 
@@ -228,7 +217,7 @@ public class GameFlowTest extends AbstractGameTest {
         //assert game is finished and there is a result
         assertTrue(game.isFinished());
         assertNotNull(game.result);
-        assertEquals(gameController.currentState.type, GameStateType.FINISHED);
+        assertEquals(gameController.gameState.type, GameStateType.FINISHED);
 
 
     }
@@ -257,7 +246,7 @@ public class GameFlowTest extends AbstractGameTest {
         startingPlayer.addButtons(1000);
 
         // Select 'buy a patch'
-        selectFirst();
+        selectSecond();
         Assert.assertEquals(GameStateType.PICK_PATCH, gameController.getState().type);
 
         // Pick the first patch
@@ -301,20 +290,20 @@ public class GameFlowTest extends AbstractGameTest {
         //Select first patch ( any should work)
         selectFirst();
 
-        //Game should not go into the next state, i.e. placing patch
-        assertNotSame(gameController.currentState.type, GameStateType.PLACE_PATCH);
-
+        //Game should go back to pick move state
+        assertSame(gameController.gameState.type, GameStateType.PICK_MOVE);
     }
 
     @Test
     public void testBuyPatchGameFinished() throws GameException, InterruptedException {
 
         makeFinishedGame();
-        assertEquals(gameController.currentState.type, GameStateType.FINISHED);
+        assertEquals(gameController.gameState.type, GameStateType.FINISHED);
         //Try to buy a patch
-        selectSecond();
+        gameInput.updateMove(Move.MOVE_RIGHT);
+        gameInput.updateMove(Move.CONFIRM);
 
         //Assert that state is still finished, i.e. not in pick patch
-        assertEquals(gameController.currentState.type, GameStateType.FINISHED);
+        assertEquals(gameController.gameState.type, GameStateType.FINISHED);
     }
 }
