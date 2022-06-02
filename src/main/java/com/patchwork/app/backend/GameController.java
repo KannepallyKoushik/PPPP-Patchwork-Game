@@ -42,9 +42,7 @@ public class GameController implements GameInputObserver, Runnable {
             currentState = new PickMove(currentPlayer, currentPlayer.quiltBoard, game.patchList.getAvailablePatches(), game.timeBoard);
 
             //Since TUI drawing based on state is not yet implemented:
-            textUI.drawTimeBoard();
-            textUI.drawQuiltBoard(currentPlayer.quiltBoard);
-            textUI.drawPatches();
+            textUI.drawPickMoveState((PickMove) currentState);
 
             //Now wait for user move
             System.out.println("Hello " + currentPlayer.name);
@@ -177,8 +175,8 @@ public class GameController implements GameInputObserver, Runnable {
                 Patch currentPatch;
                 //First draw some useful components for picking a patch
                 currentState = new PickPatch(currentPlayer, currentPlayer.quiltBoard, game.patchList.getAvailablePatches(), patchIndex);
-                textUI.drawQuiltBoard(currentPlayer.quiltBoard);
-                textUI.drawPatches();
+                textUI.drawPickPatchState((PickPatch) currentState);
+
                 System.out.println("Please choose your patch by typing LEFT or RIGHT or CONFIRM");
                 System.out.println("You are currently choosing the " + patchIndex + " patch.");
 
@@ -225,7 +223,8 @@ public class GameController implements GameInputObserver, Runnable {
 
         while (!placed) {
             currentState = new PlacePatch(currentPlayer, currentPlayer.quiltBoard, selectedPatch, x, y);
-            textUI.drawQuiltBoardWithPatch(currentPlayer.quiltBoard, selectedPatch, x, y);
+            textUI.drawPlacePatchState((PlacePatch) currentState);
+
             System.out.println("Please place your patch, with either LEFT RIGHT UP DOWN or CONFIRM");
             while (move.equals(Move.WAITING)) {
                 Thread.sleep(50);

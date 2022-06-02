@@ -1,6 +1,9 @@
 package com.patchwork.app.frontend;
 
 import com.patchwork.app.backend.Game;
+import com.patchwork.app.backend.GameStates.PickMove;
+import com.patchwork.app.backend.GameStates.PickPatch;
+import com.patchwork.app.backend.GameStates.PlacePatch;
 import com.patchwork.app.backend.Patch;
 import com.patchwork.app.backend.QuiltBoard;
 import com.patchwork.app.backend.TimeBoard.SpaceElement;
@@ -21,21 +24,27 @@ public class TUI {
 
     public void run() {
         // TODO: implement
-        //this.drawQuiltBoard(game.players.get(0).quiltBoard);
+    }
 
-        //this.drawTimeBoard();
-        //System.out.println();
-        //System.out.println();
-        //this.drawPatches();
+    public void drawPlacePatchState(PlacePatch gameState) {
+        this.drawQuiltBoardWithPatch(gameState.player.quiltBoard,
+                gameState.patch,
+                gameState.x,
+                gameState.y);
+    }
+
+    public void drawPickPatchState(PickPatch gameState) {
+        this.drawQuiltBoard(gameState.player.quiltBoard);
+        this.drawPatches(gameState.options, gameState.selectedPatch);
+    }
+
+    public void drawPickMoveState(PickMove gameState) {
+        this.drawTimeBoard();
+        this.drawQuiltBoard(gameState.player.quiltBoard);
+        this.drawPatches(gameState.options, -1);
     }
 
     public void drawQuiltBoard(QuiltBoard quiltBoard) {
-//        for(List<Boolean> row : quiltBoard.spaces) {
-//            for(Boolean boardSpace : row) {
-//                this.drawQuiltBoardSpace(boardSpace, false);
-//            }
-//            System.out.println();
-//        }
         for(int i=0; i < quiltBoard.spaces.length;i++){
             for(int j=0; j < quiltBoard.spaces[i].length;j++){
                 this.drawQuiltBoardSpace(quiltBoard.spaces[i][j],false);
@@ -47,22 +56,6 @@ public class TUI {
     // patchX and patchY are the coordinates from the top-left of the board
     public void drawQuiltBoardWithPatch(QuiltBoard quiltBoard, Patch patch, int patchX, int patchY) {
         for(int r = 0; r < quiltBoard.spaces.length; r++) {
-//            List<Boolean> row = quiltBoard.spaces.get(r);
-//            for(int c = 0; c < row.size(); c++) {
-//                Boolean boardSpace = row.get(c);
-//                Boolean patchSpace = false;
-//
-//                // Check if current space is within bounds of the patch
-//                if(r-patchY >= 0 &&
-//                        r-patchY < patch.spaces.size() &&
-//                        c-patchX >= 0 &&
-//                        c-patchX < patch.spaces.get(r-patchY).size()) {
-//                    // Check the state of this space of the patch
-//                    patchSpace = patch.spaces.get(r-patchY).get(c-patchX);
-//                }
-//
-//                this.drawQuiltBoardSpace(boardSpace, patchSpace);
-//            }
             for(int c = 0; c < quiltBoard.spaces[r].length ; c++){
                 Boolean boardSpace = quiltBoard.spaces[r][c];
                 Boolean patchSpace = false;
@@ -99,15 +92,15 @@ public class TUI {
         this.drawTimeBoardBorder(10, 3);
     }
 
-    public void drawPatches() {
+    public void drawPatches(List<Patch> patches, int selected) {
         System.out.println("               Available patches:");
         System.out.println();
-
-        List<Patch> patches = game.patchList.getAvailablePatches();
 
         for(int i = 0; i < 3; i++) {
             System.out.print("              ");
             for(Patch patch : patches) {
+                System.out.print(i == selected ? ConsoleColor.GREEN : ConsoleColor.WHITE);
+
                 this.drawPatchLine(patch, i);
 
                 System.out.print("  ");
