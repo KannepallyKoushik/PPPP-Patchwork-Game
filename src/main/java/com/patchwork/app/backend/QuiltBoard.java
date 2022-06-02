@@ -91,9 +91,6 @@ public class QuiltBoard {
 
     }
 
-
-
-
     /*
     Method to determine if the quiltboard has a 7x7 full field
     @return     True if quiltboard contains a 7x7 full field, false otherwise
@@ -135,6 +132,20 @@ public class QuiltBoard {
         }
 
         return false;
+    }
+
+    /**
+     * Returns the number of buttons that should be rewarded when the owner of this QuiltBoard gets button income.
+     * @return Number of buttons which should be awarded.
+     */
+    public int getNrRewardButtons() {
+        int nrButtons = 0;
+
+        for (Patch patch : patches) {
+            nrButtons += patch.buttonScore;
+        }
+
+        return nrButtons;
     }
 
     public int countEmpty(){
