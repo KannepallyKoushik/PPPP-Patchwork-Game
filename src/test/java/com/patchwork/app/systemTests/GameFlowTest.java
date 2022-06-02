@@ -94,7 +94,6 @@ public class GameFlowTest extends AbstractGameTest {
         );
     }
 
-
     //Test to make sure gameController makes a correct game, implementing required test #1
     @Test
     public void setupTest() {
@@ -177,6 +176,7 @@ public class GameFlowTest extends AbstractGameTest {
                 Move.MOVE_DOWN,
                 Move.CONFIRM
         );
+
         //Assert that currentPlayer in the game has now changed
         Assert.assertNotSame(startingPlayer, game.timeBoard.getCurrentPlayer());
 
@@ -257,13 +257,14 @@ public class GameFlowTest extends AbstractGameTest {
         startingPlayer.addButtons(1000);
 
         // Select 'buy a patch'
-        selectSecond();
+        selectFirst();
         Assert.assertEquals(GameStateType.PICK_PATCH, gameController.getState().type);
 
         // Pick the first patch
         selectFirst();
         //Should now be in placing patch state
         Assert.assertEquals(GameStateType.PLACE_PATCH, gameController.getState().type);
+
         //Place the patch and go to next player turn
         executeMoves(Move.CONFIRM);
 

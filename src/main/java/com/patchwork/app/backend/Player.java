@@ -46,17 +46,4 @@ public class Player {
 
         return false;
     }
-
-    /*
-    Method to add buttons corresponding to the numbers on the patch
-     */
-    public void addPatchButtons() {
-        for (Patch patch : this.quiltBoard.patches) {
-            this.nrButtons += patch.buttonScore;
-        }
-    }
-
-
-
-
 }

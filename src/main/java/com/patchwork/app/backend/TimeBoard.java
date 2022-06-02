@@ -4,15 +4,17 @@ import java.util.*;
 
 public class TimeBoard {
 
+    public static final int NR_SPACES = 52;
+
     public List<List<SpaceElement>> spaces;
     public List<Player> players;
     public Map<Player, Integer> playerPositions = new HashMap<>();
 
     public TimeBoard(List<Player> players) {
         this.spaces = new ArrayList<>();
-        List<Integer> buttonsIndicesList = Arrays.asList(new Integer[]{8,15, 23, 27, 32,35,41,49});
-        List<Integer> specialPatchIndicesList = Arrays.asList(new Integer[]{20, 29, 37, 43, 48, 51});
-        for (int i = 0; i < 52; i++) {  // TODO: populate board with actual contents
+        List<Integer> buttonsIndicesList = Arrays.asList(8,15, 23, 27, 32,35,41,49);
+        List<Integer> specialPatchIndicesList = Arrays.asList(20, 29, 37, 43, 48, 51);
+        for (int i = 0; i < NR_SPACES; i++) {
             if(i == 0){
                 ArrayList<SpaceElement> firstSpace = new ArrayList<>();
                 firstSpace.add(new SpaceElement(SpaceElementType.PLAYER, players.get(0)));
@@ -79,9 +81,9 @@ public class TimeBoard {
         return playerPositions.get(player);
     }
 
-    public void movePlayer(Player player, int position) {
-        Integer currentPlayerPosition = playerPositions.get(player);
-        Integer expectedPlayerPosition = position;
+    public List<SpaceElement> movePlayer(Player player, int position) {
+        int currentPlayerPosition = playerPositions.get(player);
+        int expectedPlayerPosition = position;
 
         // 1. Clearing the SpaceElement where the Player is from spaces list
         List<SpaceElement> space = spaces.get(currentPlayerPosition);
@@ -101,5 +103,16 @@ public class TimeBoard {
         spaces.set(expectedPlayerPosition, newSpace);
 
         playerPositions.put(player, expectedPlayerPosition);
+
+        // Determine and return the non-player SpaceElements that were obtained
+        List<SpaceElement> obtainedSpaceElements = new ArrayList<>();
+        for (int i = currentPlayerPosition + 1; i <= expectedPlayerPosition; i++) {
+            for (SpaceElement se : spaces.get(i)) {
+                if (se.type != SpaceElementType.PLAYER) {
+                    obtainedSpaceElements.add(se);
+                }
+            }
+        }
+        return obtainedSpaceElements;
     }
 }

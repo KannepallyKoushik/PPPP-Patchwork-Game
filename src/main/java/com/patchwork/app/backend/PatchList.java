@@ -33,19 +33,15 @@ public class PatchList {
     }
 
     public void removePatch(Patch patch) {
-        /*
-        There was an issue with placing special patch, so i changed these few lines
-         */
-        //This case is the special patch, so dont do anything
         if (!patches.contains(patch)) {
+            //This case is the special patch, so dont do anything
             return;
         }
         if (!getAvailablePatches().contains(patch)) {
             throw new RuntimeException("Patch is not present in patch list");
-        } else {
-            int patchIndex = patches.indexOf(patch);
-            patches.remove(patchIndex);
-            neutralTokenPosition = patchIndex;
         }
+        int patchIndex = patches.indexOf(patch);
+        patches.remove(patchIndex);
+        neutralTokenPosition = patchIndex;
     }
 }
