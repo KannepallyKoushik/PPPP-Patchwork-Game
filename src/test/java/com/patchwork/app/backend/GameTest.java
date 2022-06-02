@@ -1,16 +1,17 @@
 package com.patchwork.app.backend;
 
 import com.patchwork.app.backend.Exceptions.GameException;
+import com.patchwork.app.testUtils.AbstractGameTest;
+import com.patchwork.app.testUtils.MockGameFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
-public class GameTest {
+public class GameTest extends AbstractGameTest {
 
     private static Game makeFinishedGame() {
-        Game game = new Game();
+        Game game = new MockGameFactory().createGame();
 
         game.timeBoard.movePlayer(game.players.get(0), 51);
         try {
@@ -45,8 +46,6 @@ public class GameTest {
 
     @Test
     public void testPlacePatch() throws GameException {
-        Game game = new Game();
-
         Player currentPlayer = game.timeBoard.getCurrentPlayer();
         Patch patch = game.patchList.getAvailablePatches().get(0);
 
@@ -61,7 +60,7 @@ public class GameTest {
 
     @Test
     public void testPlacePatchSpecialTile() throws GameException {
-        Game game = new Game();
+        createGameWithPatchList(Arrays.asList(makeSevenBySevenPatch(), makeSevenBySevenPatch()));
 
         Player player1 = game.players.get(0);
         Player player2 = game.players.get(1);
@@ -77,8 +76,6 @@ public class GameTest {
 
     @Test(expected = GameException.class)
     public void testPlacePatchInvalidLocation() throws GameException {
-        Game game = new Game();
-
         Player currentPlayer = game.timeBoard.getCurrentPlayer();
         Patch patch = game.patchList.getAvailablePatches().get(0);
 
@@ -87,8 +84,6 @@ public class GameTest {
 
     @Test(expected = GameException.class)
     public void testPlacePatchOverlap() throws GameException {
-        Game game = new Game();
-
         Player currentPlayer = game.timeBoard.getCurrentPlayer();
         Patch patch = game.patchList.getAvailablePatches().get(0);
 
@@ -100,8 +95,6 @@ public class GameTest {
 
     @Test(expected = GameException.class)
     public void testPlacePatchNotEnoughButtons() throws GameException {
-        Game game = new Game();
-
         Player currentPlayer = game.timeBoard.getCurrentPlayer();
         currentPlayer.nrButtons = 0; // Set nrButtons to 0 so the player cant afford the patch
         Patch patch = game.patchList.getAvailablePatches().get(0);
@@ -121,8 +114,6 @@ public class GameTest {
 
     @Test
     public void testMovePastNextPlayer() throws GameException {
-        Game game = new Game();
-
         Player player1 = game.players.get(0);
         Player player2 = game.players.get(1);
 
@@ -134,8 +125,6 @@ public class GameTest {
 
     @Test(expected = GameException.class)
     public void testMovePastNextPlayerBehind() throws GameException {
-        Game game = new Game();
-
         Player player = game.players.get(1);
 
         game.timeBoard.movePlayer(player, 1);
