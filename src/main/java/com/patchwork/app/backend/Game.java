@@ -16,12 +16,10 @@ public class Game {
     public Player specialTilePlayer;
     public Player firstFinishedPlayer;
 
-    public Game() {
-        this.players = new ArrayList<>();
-        this.players.add(new Player("Player 1"));
-        this.players.add(new Player("Player 2"));
-        this.timeBoard = new TimeBoard(this.players);
-        this.patchList = new PatchList();
+    public Game(List<Player> players, TimeBoard timeBoard, PatchList patchList) {
+        this.players = players;
+        this.timeBoard = timeBoard;
+        this.patchList = patchList;
         this.specialTilePlayer = null;
         this.result = null;
     }
@@ -32,7 +30,7 @@ public class Game {
      * @param player The player to obtain the opponent of
      * @return The opponent of the provided player
      */
-    private Player getOpponent(Player player) {
+    public Player getOpponent(Player player) {
         for (Player p : players) {
             if (player != p) {
                 return p;
