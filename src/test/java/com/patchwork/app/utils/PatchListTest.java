@@ -3,6 +3,8 @@ package com.patchwork.app.utils;
 import com.patchwork.app.backend.Patch;
 import com.patchwork.app.backend.PatchFactory;
 import com.patchwork.app.backend.PatchList;
+import com.patchwork.app.backend.PatchListFactory;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -13,10 +15,16 @@ import static org.junit.Assert.assertNotEquals;
 
 public class PatchListTest {
 
+    private PatchList pl;
+
+    @Before
+    public void setUp() {
+        pl = new PatchListFactory().createPatchList();
+    }
+
     @Test
     public void getAvailablePatches() {
         List<Patch> fullPatchList = new PatchFactory().getPatches();
-        PatchList pl = new PatchList();
 
         assertEquals(fullPatchList.subList(0, 3), pl.getAvailablePatches());
 
@@ -43,8 +51,6 @@ public class PatchListTest {
 
     @Test
     public void removeAllPatches() {
-        PatchList pl = new PatchList();
-
         for (int i = 0; i < 33; i++) {
             assertNotEquals(0, pl.getAvailablePatches().size());
             pl.removePatch(pl.getAvailablePatches().get(0));
@@ -55,8 +61,6 @@ public class PatchListTest {
 
     @Test(expected = RuntimeException.class)
     public void removeUnavailablePatch() {
-        PatchList pl = new PatchList();
-
         Patch rm = pl.getAvailablePatches().get(0);
         pl.removePatch(pl.getAvailablePatches().get(1));
 
