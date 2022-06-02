@@ -1,5 +1,6 @@
 package com.patchwork.app.backend;
 
+import com.patchwork.app.MoveResult;
 import com.patchwork.app.backend.Exceptions.GameException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,6 +104,43 @@ public class Game {
     }
 
     /**
+     * Converts a list of SpaceElements passed when making a move to a MoveResult. Computes the number of special
+     * patches passed, and the total amount of buttons gained from button income.
+     *
+     * @param player The player that made the move.
+     * @param spaceElements The SpaceElements passed by the executed move.
+     * @return A MoveResult indicating the result of the passed SpaceElements.
+     */
+    private MoveResult getSpaceElementsMoveResult(Player player, List<TimeBoard.SpaceElement> spaceElements) {
+        int nrButtons = 0;
+        int nrSpecialPatches = 0;
+
+        for (TimeBoard.SpaceElement spaceElement : spaceElements) {
+            switch (spaceElement.type) {
+                case BUTTON:
+                    nrButtons += player.quiltBoard.getNrRewardButtons();
+                    break;
+                case PATCH:
+                    nrSpecialPatches++;
+            }
+        }
+
+        return new MoveResult(nrButtons, nrSpecialPatches);
+    }
+
+    /**
+     * Helper function which calls timeBoard.movePlayer and then converts the result to a MoveResult using
+     * getSpaceElementsMoveResult.
+     * @param player The Player to move.
+     * @param position The position to move the player to.
+     * @return The result of the move.
+     */
+    private MoveResult movePlayer(Player player, int position) {
+        List<TimeBoard.SpaceElement> spaceElements = timeBoard.movePlayer(player, position);
+        return getSpaceElementsMoveResult(player, spaceElements);
+    }
+
+    /**
      * Places a patch on the quiltboard of a player. Also checks if the special tile should be awarded afterwards.
      *
      * @param player The player whose QuiltBoard to place the patch on
@@ -112,8 +150,7 @@ public class Game {
      * @throws GameException When the patch cannot be placed at the specified location or the player cannot afford the
      *                       patch.
      */
-    public void placePatch(Player player, Patch patch, int x, int y) throws GameException {
-        // TODO: properly implement patch button awards.
+    public MoveResult placePatch(Player player, Patch patch, int x, int y) throws GameException {
         if (isFinished()) {
             throw new GameException("Game is already finished");
         }
@@ -129,7 +166,8 @@ public class Game {
         patchList.removePatch(patch);
 
         int newPosition = Math.min(51, timeBoard.getPlayerPosition(player) + patch.timeTokenCost);
-        timeBoard.movePlayer(player, newPosition);
+        MoveResult result = movePlayer(player, newPosition);
+        player.addButtons(result.getNrButtons());
 
         // Award special tile if obtained
         if (specialTilePlayer == null && player.quiltBoard.hasSevenBySeven()) {
@@ -140,6 +178,8 @@ public class Game {
         if (gameShouldFinish()) {
             finalizeGame();
         }
+
+        return result;
     }
 
     /**
@@ -149,7 +189,7 @@ public class Game {
      * @param player The player to move past its opponent.
      * @throws GameException If the game has already finished.
      */
-    public void movePastNextPlayer(Player player) throws GameException {
+    public MoveResult movePastNextPlayer(Player player) throws GameException {
         if (isFinished()) {
             throw new GameException("Game is already finished");
         }
@@ -161,8 +201,8 @@ public class Game {
             throw new GameException("Next player is behind the current player");
         }
 
-        timeBoard.movePlayer(player, newPosition);
-        player.addButtons(newPosition - currentPosition);
+        MoveResult result = movePlayer(player, newPosition);
+        player.addButtons(newPosition - currentPosition + result.getNrButtons());
 
         // Set first finished player if it is the case.
         if (firstFinishedPlayer == null && newPosition == 51) {
@@ -173,5 +213,7 @@ public class Game {
         if (gameShouldFinish()) {
             finalizeGame();
         }
+
+        return result;
     }
 }
