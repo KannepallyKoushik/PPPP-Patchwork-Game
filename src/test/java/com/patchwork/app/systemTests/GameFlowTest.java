@@ -53,7 +53,12 @@ public class GameFlowTest extends AbstractGameTest {
     //Method used in moving past a player after a finished game
     private void makeFinishedGame() throws GameException, InterruptedException {
         game.timeBoard.movePlayer(nextPlayer, 51);
-        executeMoves(Move.MOVE_LEFT, Move.CONFIRM);
+
+        executeMoves(
+                Move.MOVE_LEFT,
+                Move.CONFIRM
+        );
+
         if (!game.isFinished()) {
             throw new RuntimeException("Created game is not finished");
         }
@@ -128,7 +133,7 @@ public class GameFlowTest extends AbstractGameTest {
 
 
         // Check Player2 is now current player, as they are the furthest behind
-        assertEquals(gameController.currentPlayer.name, nextPlayer.name);
+        assertSame(game.timeBoard.getCurrentPlayer(), nextPlayer);
     }
 
 
@@ -173,7 +178,7 @@ public class GameFlowTest extends AbstractGameTest {
         );
 
         //Assert that currentPlayer in the game has now changed
-        Assert.assertNotEquals(startingPlayer, game.timeBoard.getCurrentPlayer());
+        Assert.assertNotSame(startingPlayer, game.timeBoard.getCurrentPlayer());
 
         //Assert that the second player is now in pick_move state
         Assert.assertEquals(GameStateType.PICK_MOVE, gameController.getState().type);
@@ -264,12 +269,12 @@ public class GameFlowTest extends AbstractGameTest {
         executeMoves(Move.CONFIRM);
 
         //Assert now it is next player turn
-        assertEquals(gameController.currentPlayer, gameController.getOtherPlayer(startingPlayer));
+        assertSame(game.timeBoard.getCurrentPlayer(), game.getOpponent(startingPlayer));
 
         //Let next player move just to skip turn
         selectFirst();
         //assert it is again starting player turn
-        assertEquals(gameController.currentPlayer, startingPlayer);
+        assertSame(game.timeBoard.getCurrentPlayer(), startingPlayer);
 
         //Repeat turn again, i.e.:
         // Select 'buy a patch'
@@ -283,7 +288,6 @@ public class GameFlowTest extends AbstractGameTest {
 
         //Assert that it is still currently in place patch state
         Assert.assertEquals(GameStateType.PLACE_PATCH, gameController.getState().type);
-
     }
 
     //Test when someone tries to buy a patch without enough buttons
@@ -313,6 +317,4 @@ public class GameFlowTest extends AbstractGameTest {
         //Assert that state is still finished, i.e. not in pick patch
         assertEquals(gameController.currentState.type, GameStateType.FINISHED);
     }
-
-
 }
