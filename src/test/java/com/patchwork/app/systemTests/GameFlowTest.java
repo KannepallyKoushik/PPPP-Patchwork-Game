@@ -127,7 +127,6 @@ public class GameFlowTest extends AbstractGameTest {
         selectFirst();
 
 
-        Thread.sleep(500);
         // Check Player2 is now current player, as they are the furthest behind
         assertEquals(gameController.currentPlayer.name, nextPlayer.name);
     }
@@ -154,12 +153,10 @@ public class GameFlowTest extends AbstractGameTest {
 
         // Select 'buy a patch'
         selectSecond();
-        Thread.sleep(1000);
         Assert.assertEquals(GameStateType.PICK_PATCH, gameController.getState().type);
 
         // Pick the first patch
         selectFirst();
-        Thread.sleep(1000);
         Assert.assertEquals(GameStateType.PLACE_PATCH, gameController.getState().type);
 
         // Make sure that the right patch was selected
@@ -262,6 +259,7 @@ public class GameFlowTest extends AbstractGameTest {
         selectFirst();
         //Should now be in placing patch state
         Assert.assertEquals(GameStateType.PLACE_PATCH, gameController.getState().type);
+
         //Place the patch and go to next player turn
         executeMoves(Move.CONFIRM);
 
@@ -308,7 +306,6 @@ public class GameFlowTest extends AbstractGameTest {
     public void testBuyPatchGameFinished() throws GameException, InterruptedException {
 
         makeFinishedGame();
-        Thread.sleep(100);
         assertEquals(gameController.currentState.type, GameStateType.FINISHED);
         //Try to buy a patch
         selectSecond();
