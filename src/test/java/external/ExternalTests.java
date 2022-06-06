@@ -2,6 +2,7 @@ package external;
 
 import com.patchwork.app.backend.*;
 import com.patchwork.app.backend.Exceptions.GameException;
+import com.patchwork.app.testUtils.MockGameFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,6 +61,7 @@ public class ExternalTests {
                 0
         );
     }
+
 
 
     //Test to make sure game makes a correct game, implementing required test #1
@@ -231,6 +233,8 @@ public class ExternalTests {
         startingPlayer.nrButtons = 0; // Set nrButtons to 0 so the player cant afford the patch
 
         Patch patch1 = game.patchList.getAvailablePatches().get(0);
+        assertTrue(patch1.buttonCost > 0);
+
         game.placePatch(startingPlayer, patch1, 0, 0);
 
         assertEquals(0, startingPlayer.quiltBoard.patches.size());
@@ -239,24 +243,20 @@ public class ExternalTests {
     @Test(expected = GameException.class)
     public void testBuyPatchGameFinished() throws GameException {
 
-
+        //Initial stuff is same as testFinishGame()
         //Let opponent finish
         game.timeBoard.movePlayer(otherPlayer, 51);
 
-
         // Select 'move to next player'
         game.movePastNextPlayer(startingPlayer);
-
 
         //assert game is finished and there is a result
         assertTrue(game.isFinished());
         assertNotNull(game.result);
 
-
+        //Now game is finished so:
         //Now try to still place a patch
         Patch patch1 = game.patchList.getAvailablePatches().get(0);
-
-
 
         //Assert that the patch can be placed on the quiltboard, if there are no system checks
         //To make sure that the player has enough buttons, no overlap etc
