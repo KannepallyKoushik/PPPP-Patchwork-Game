@@ -2,7 +2,6 @@ package external;
 
 import com.patchwork.app.backend.*;
 import com.patchwork.app.backend.Exceptions.GameException;
-import com.patchwork.app.testUtils.MockGameFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
