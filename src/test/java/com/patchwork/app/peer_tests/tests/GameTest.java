@@ -1,7 +1,5 @@
-package external.to_implement;
+package com.patchwork.app.peer_tests.tests;
 
-import org.junit.Assert;
-import org.junit.Test;
 /*
 import patchwork.core.model.Game;
 import patchwork.players.IPlayer;

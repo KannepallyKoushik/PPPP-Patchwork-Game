@@ -1,8 +1,8 @@
-package external.to_implement;
-/*
+package com.patchwork.app.peer_tests.tests;
+
+import com.patchwork.app.peer_tests.adapters.IPatch;
+import com.patchwork.app.peer_tests.adapters.PurchasablePatch;
 import org.junit.Test;
-import patchwork.core.model.patches.IPatch;
-import patchwork.core.model.patches.PurchasablePatch;
 
 import java.util.Arrays;
 
@@ -21,6 +21,8 @@ public class PatchTest {
                 new boolean[]{true, false, false, true}
         };
         IPatch patch = new PurchasablePatch(patchString, 0, 0, 0);
+
+
         assertTrue(Arrays.deepEquals(reference, patch.getShape()));
 
         boolean[][] refClockwise = new boolean[][]{
@@ -74,6 +76,6 @@ public class PatchTest {
         patch.flipOverVertical();
         assertTrue(Arrays.deepEquals(refFlipVertical, patch.getShape()));
         assertFalse(Arrays.deepEquals(reference, patch.getShape()));
+
     }
 }
-*/
