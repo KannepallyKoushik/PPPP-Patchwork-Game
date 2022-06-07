@@ -12,13 +12,13 @@ public class QuiltBoard {
     public static final int DIM_X = 9;
     public static final int DIM_Y = 9;
 
-    public Boolean  spaces[][];
+    public boolean[][] spaces;
     public List<Patch> patches;
 
 
     //Constructor
     public QuiltBoard() {
-        this.spaces = new Boolean[9][9];
+        this.spaces = new boolean[9][9];
         for (int i = 0; i < DIM_X; i++) {
             for (int j = 0; j < DIM_Y; j++) {
                 this.spaces[i][j] = false;
@@ -78,6 +78,7 @@ public class QuiltBoard {
     @param y        The top most coordinate of the matrix space which you want to place
      */
     public void placePatch(Patch patch, int x, int y) throws GameException {
+
         //Determine if patch can be placed
         if (canPlace(patch, x, y)) {
             //Make a list of all the coordinates of the patch
@@ -90,6 +91,8 @@ public class QuiltBoard {
             }
 
             patches.add(patch);
+        } else {
+            throw new GameException("Tried to place patch when it can not be placed!");
         }
 
     }
@@ -153,8 +156,8 @@ public class QuiltBoard {
 
     public int countEmpty(){
         int emptySpaces = 0;
-        for (int i = 0; i < DIM_X; i++) {
-            for (int j = 0; j < DIM_Y; j++) {
+        for (int i = 0; i < spaces.length; i++) {
+            for (int j = 0; j < spaces[i].length; j++) {
                 if(spaces[i][j] == false){
                     emptySpaces += 1;
                 }

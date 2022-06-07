@@ -1,10 +1,10 @@
 package com.patchwork.app.peer_tests.tests;
-/*
+
+import com.patchwork.app.peer_tests.adapters.LeatherPatch;
+import com.patchwork.app.peer_tests.adapters.PurchasablePatch;
+import com.patchwork.app.peer_tests.adapters.PatchBoard;
 import org.junit.Assert;
 import org.junit.Test;
-import patchwork.core.model.patchboard.PatchBoard;
-import patchwork.core.model.patches.LeatherPatch;
-import patchwork.core.model.patches.PurchasablePatch;
 
 public class PatchBoardTest {
     @Test
@@ -36,4 +36,3 @@ public class PatchBoardTest {
                 Assert.assertTrue(aBoolean);
     }
 }
-*/

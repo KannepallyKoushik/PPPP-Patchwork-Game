@@ -1,12 +1,12 @@
 package com.patchwork.app.peer_tests.tests;
-/*
+
 import org.junit.Assert;
 import org.junit.Test;
-import patchwork.core.model.tokens.PatchToken;
+import com.patchwork.app.peer_tests.adapters.PatchToken;
 
 public class PatchTokenTest {
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testSetAndGetPosition() {
         PatchToken token = new PatchToken();
         Assert.assertEquals(0, token.getPosition());
@@ -20,11 +20,11 @@ public class PatchTokenTest {
         token.setPosition(0);
         Assert.assertEquals(0, token.getPosition());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> token.setPosition(-1));
-        Assert.assertThrows(IllegalArgumentException.class, () -> token.setPosition(-15));
+        token.setPosition(-1);
+        token.setPosition(-15);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testMovingToken() {
         PatchToken token = new PatchToken();
         Assert.assertEquals(0, token.getPosition());
@@ -38,8 +38,7 @@ public class PatchTokenTest {
         token.move(0);
         Assert.assertEquals(25, token.getPosition());
 
-        Assert.assertThrows(IllegalArgumentException.class, () -> token.move(-1));
-        Assert.assertThrows(IllegalArgumentException.class, () -> token.move(-15));
+        token.move(-1);
+        token.move(-15);
     }
 }
-*/

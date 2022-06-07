@@ -8,10 +8,11 @@ import java.util.List;
 public class PurchasablePatch extends Patch implements IPatch {
 
     public PurchasablePatch(String patchString, int buttonCost, int timeTokenCost, int buttonScore) {
-        super( transform(patchString), buttonCost, timeTokenCost, buttonScore);
+        super( stringToList(patchString), buttonCost, timeTokenCost, buttonScore);
     }
 
-    private static List<List<Boolean>> transform(String patchString){
+    //Adapt their patch string into our List<List>> Boolean
+    private static List<List<Boolean>> stringToList(String patchString){
         List<List<Boolean>> spaces = new ArrayList<>();
         //Split on empty space " "
         String[] strings = patchString.split(" ");
@@ -41,6 +42,7 @@ public class PurchasablePatch extends Patch implements IPatch {
     }
 
 
+
     //Since our method returns a new Patch, as opposed to changing the old patch in place, have to set spaces again
     //This will be done in all 4 methods
     @Override
@@ -65,4 +67,6 @@ public class PurchasablePatch extends Patch implements IPatch {
         Patch rotatedPatch = mirrorUp();
         this.spaces = rotatedPatch.spaces;
     }
+
+
 }
