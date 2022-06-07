@@ -16,7 +16,6 @@ public class PurchasablePatch extends Patch implements IPatch {
         //Split on empty space " "
         String[] strings = patchString.split(" ");
         //Convert each element of array to true/false
-        int maxY = strings.length;
         int maxX = strings[0].length();
         //Loop over array
         for (String string : strings) {
@@ -41,6 +40,9 @@ public class PurchasablePatch extends Patch implements IPatch {
         return shape;
     }
 
+
+    //Since our method returns a new Patch, as opposed to changing the old patch in place, have to set spaces again
+    //This will be done in all 4 methods
     @Override
     public void rotateClockwise() {
         Patch rotatedPatch = rotateRight();
