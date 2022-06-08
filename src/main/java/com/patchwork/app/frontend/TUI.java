@@ -104,14 +104,14 @@ public class TUI {
 
         for(int i = 0; i < 3; i++) {
             System.out.print("              ");
-            for(Patch patch : patches) {
-                System.out.print(i == selected ? ConsoleColor.GREEN : ConsoleColor.WHITE);
+            for(int p = 0; p < patches.size(); p++) {
+                System.out.print(p == selected ? ConsoleColor.GREEN : ConsoleColor.WHITE);
 
-                this.drawPatchLine(patch, i);
+                this.drawPatchLine(patches.get(p), i);
 
                 System.out.print("  ");
             }
-            System.out.println();
+            System.out.println(ConsoleColor.WHITE);
         }
 
         System.out.print("Button cost:");
