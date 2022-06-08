@@ -66,8 +66,18 @@ public class GameFlowTest extends AbstractGameTest {
 
     private void executeMoves(Move... moves) {
         for (Move move : moves) {
+            Thread waitThread = new Thread(() -> {
+                gameController.waitUntilNextGameCycle();
+            });
+            waitThread.start();
+
             gameInput.updateMove(move);
-            gameController.waitUntilNextGameCycle();
+
+            try {
+                waitThread.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Failed to join game loop synchronization thread");
+            }
         }
     }
 
