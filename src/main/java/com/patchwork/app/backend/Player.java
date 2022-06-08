@@ -5,11 +5,17 @@ import com.patchwork.app.backend.Exceptions.GameException;
 public class Player {
 
     public String name;
+    public int id;
     public QuiltBoard quiltBoard;
     public int nrButtons;
 
     public Player(String name) {
+        this(name, 0);
+    }
+
+    public Player(String name, int id) {
         this.name = name;
+        this.id = id;
         this.quiltBoard = new QuiltBoard();
         this.nrButtons = 5;
     }
@@ -45,5 +51,13 @@ public class Player {
         }
 
         return false;
+    }
+
+    public int getCredits() {
+        return this.nrButtons;
+    }
+
+    public int getId() {
+        return this.id;
     }
 }

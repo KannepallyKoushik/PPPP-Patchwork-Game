@@ -1,15 +1,16 @@
 package com.patchwork.app.peer_tests.tests;
 
-/*
-import patchwork.core.model.Game;
-import patchwork.players.IPlayer;
-import patchwork.players.PlayerType;
+import com.patchwork.app.backend.Player;
+import com.patchwork.app.peer_tests.adapters.AdaptedGame;
+import com.patchwork.app.peer_tests.adapters.PlayerType;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class GameTest {
 
     @Test
     public void GameConstructorTest() {
-        Game game = new Game();
+        AdaptedGame game = new AdaptedGame();
         // getPlayer returns a player based on id, usually (essentially player index)
         Assert.assertNull(game.getPlayer(-1));
         Assert.assertNull(game.getPlayer(0));
@@ -24,13 +25,13 @@ public class GameTest {
 
     @Test
     public void playerTest() {
-        Game game = new Game();
+        AdaptedGame game = new AdaptedGame();
 
         // add 2 players
         game.addPlayer(PlayerType.HUMAN, "P1");
         game.addPlayer(PlayerType.HUMAN, "P2");
-        IPlayer p1 = game.getPlayer(0);
-        IPlayer p2 = game.getPlayer(1);
+        Player p1 = game.getPlayer(0);
+        Player p2 = game.getPlayer(1);
         Assert.assertNotNull(p1);
         Assert.assertNotNull(p2);
 
@@ -54,4 +55,3 @@ public class GameTest {
         Assert.assertEquals(p2, game.getOtherPlayer(p1.getId()));
     }
 }
-*/

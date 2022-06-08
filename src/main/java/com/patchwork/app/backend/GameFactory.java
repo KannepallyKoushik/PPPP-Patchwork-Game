@@ -20,8 +20,8 @@ public class GameFactory {
 
     public static List<Player> createPlayers() {
         List<Player> players = new ArrayList<>();
-        players.add(new Player("Player 1"));
-        players.add(new Player("Player 2"));
+        players.add(new Player("Player 1", 0));
+        players.add(new Player("Player 2", 1));
         return players;
     }
 
