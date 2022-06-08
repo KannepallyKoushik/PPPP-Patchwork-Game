@@ -68,5 +68,7 @@ public class PurchasablePatch extends Patch implements IPatch {
         this.spaces = rotatedPatch.spaces;
     }
 
-
+    public int getButtonCost() {
+        return this.buttonCost;
+    }
 }

@@ -6,8 +6,8 @@ import java.util.List;
 
 public class PatchList {
 
-    private final ArrayList<Patch> patches;
-    private int neutralTokenPosition;
+    protected final ArrayList<Patch> patches;
+    protected int neutralTokenPosition;
 
     public PatchList(ArrayList<Patch> patches) {
         this.patches = patches;

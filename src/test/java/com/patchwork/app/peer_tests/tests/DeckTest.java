@@ -1,14 +1,12 @@
 package com.patchwork.app.peer_tests.tests;
 
-/*
 import org.junit.Assert;
 import org.junit.Test;
-import patchwork.core.model.Deck;
-import patchwork.core.model.patches.PurchasablePatch;
-import patchwork.core.model.tokens.PatchToken;
+import com.patchwork.app.peer_tests.adapters.Deck;
+import com.patchwork.app.peer_tests.adapters.PurchasablePatch;
+import com.patchwork.app.peer_tests.adapters.PatchToken;
 
 public class DeckTest {
-
     private void buildDeck(PurchasablePatch[] patches, Deck deck) {
         for (PurchasablePatch patch : patches) {
             deck.addPatch(patch);
@@ -144,5 +142,3 @@ public class DeckTest {
         Assert.assertEquals(0, deck.getPatchToken().getPosition());
     }
 }
-
- */
