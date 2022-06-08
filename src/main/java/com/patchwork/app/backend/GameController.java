@@ -45,11 +45,13 @@ public class GameController implements GameInputObserver, Runnable {
         this.tickSpeed = tickSpeed;
     }
 
-    public void waitUntilNextGameCycle() {
-        int ctr = gameCycleCounter;
+    public int getGameCycle() {
+        return gameCycleCounter;
+    }
 
+    public void waitUntilGameCycle(int cycle) {
         try {
-            while (ctr == gameCycleCounter) {
+            while (gameCycleCounter != cycle) {
                 Thread.sleep(tickSpeed / 2);
             }
         } catch (InterruptedException e) {
