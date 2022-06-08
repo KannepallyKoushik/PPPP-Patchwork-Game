@@ -4,13 +4,18 @@ import java.util.*;
 
 public class TimeBoard {
 
-    public static final int NR_SPACES = 52;
+    public int NR_SPACES;
 
     public List<List<SpaceElement>> spaces;
     public List<Player> players;
     public Map<Player, Integer> playerPositions = new HashMap<>();
 
     public TimeBoard(List<Player> players) {
+        this(players, 52);
+    }
+
+    public TimeBoard(List<Player> players, int size) {
+        this.NR_SPACES = size;
         this.spaces = new ArrayList<>();
         List<Integer> buttonsIndicesList = Arrays.asList(8,15, 23, 27, 32,35,41,49);
         List<Integer> specialPatchIndicesList = Arrays.asList(20, 29, 37, 43, 48, 51);

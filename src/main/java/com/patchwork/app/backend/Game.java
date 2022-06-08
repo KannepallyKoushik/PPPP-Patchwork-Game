@@ -47,7 +47,7 @@ public class Game {
      */
     private boolean gameShouldFinish() {
         for (Player player : players) {
-            if (timeBoard.getPlayerPosition(player) != 51) {
+            if (timeBoard.getPlayerPosition(player) != timeBoard.NR_SPACES - 1) {
                 return false;
             }
         }
@@ -165,7 +165,7 @@ public class Game {
         player.quiltBoard.placePatch(patch, x, y);
         patchList.removePatch(patch);
 
-        int newPosition = Math.min(51, timeBoard.getPlayerPosition(player) + patch.timeTokenCost);
+        int newPosition = Math.min(timeBoard.NR_SPACES - 1, timeBoard.getPlayerPosition(player) + patch.timeTokenCost);
         MoveResult result = movePlayer(player, newPosition);
         player.addButtons(result.getNrButtons());
 
@@ -195,7 +195,7 @@ public class Game {
         }
 
         int currentPosition = timeBoard.getPlayerPosition(player);
-        int newPosition = Math.min(51, timeBoard.getPlayerPosition(getOpponent(player)) + 1);
+        int newPosition = Math.min(timeBoard.NR_SPACES - 1, timeBoard.getPlayerPosition(getOpponent(player)) + 1);
 
         if (currentPosition >= newPosition) {
             throw new GameException("Next player is behind the current player");
@@ -205,7 +205,7 @@ public class Game {
         player.addButtons(newPosition - currentPosition + result.getNrButtons());
 
         // Set first finished player if it is the case.
-        if (firstFinishedPlayer == null && newPosition == 51) {
+        if (firstFinishedPlayer == null && newPosition == timeBoard.NR_SPACES - 1) {
             firstFinishedPlayer = player;
         }
 

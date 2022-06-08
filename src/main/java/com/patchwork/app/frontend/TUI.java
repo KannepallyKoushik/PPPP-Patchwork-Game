@@ -79,6 +79,8 @@ public class TUI {
     }
 
     public void drawTimeBoard() {
+        if(this.game.timeBoard.spaces.size() != 52) return; // TO DO: Implement drawTimeBoard for variable sizes
+
         this.drawTimeBoardBorder(13, 0);
         this.drawTimeBoardSpaces(13, 0, 0, false);
         this.drawTimeBoardBorder(13, 0);
