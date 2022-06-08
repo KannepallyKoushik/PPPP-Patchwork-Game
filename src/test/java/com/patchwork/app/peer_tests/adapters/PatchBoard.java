@@ -4,8 +4,6 @@ import com.patchwork.app.backend.Exceptions.GameException;
 import com.patchwork.app.backend.Patch;
 import com.patchwork.app.backend.QuiltBoard;
 
-import java.util.Arrays;
-
 public class PatchBoard extends QuiltBoard {
 
     public PatchBoard(int i, int j) {

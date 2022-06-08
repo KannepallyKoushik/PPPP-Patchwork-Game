@@ -3,10 +3,9 @@ package com.patchwork.app.peer_tests.adapters;
 
 import com.patchwork.app.backend.Patch;
 
-import java.util.Arrays;
 import java.util.Collections;
 
-public class LeatherPatch extends Patch implements IPatch   {
+public class LeatherPatch extends Patch implements IPatch {
 
     public LeatherPatch() {
         super(Collections.singletonList(Collections.singletonList(true)), 0,0,0);
