@@ -11,8 +11,6 @@ public class Deck extends PatchList {
 
     public Deck(boolean init) {
         super(new ArrayList<Patch>());
-
-        if(!init) return;
     }
 
     public void addPatch(PurchasablePatch patch) {
