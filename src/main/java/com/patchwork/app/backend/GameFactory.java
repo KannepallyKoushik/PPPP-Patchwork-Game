@@ -18,7 +18,7 @@ public class GameFactory {
         return new Game(players, timeBoard, patchList);
     }
 
-    private List<Player> createPlayers() {
+    public static List<Player> createPlayers() {
         List<Player> players = new ArrayList<>();
         players.add(new Player("Player 1"));
         players.add(new Player("Player 2"));

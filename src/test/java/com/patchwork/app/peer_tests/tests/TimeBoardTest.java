@@ -1,14 +1,14 @@
 package com.patchwork.app.peer_tests.tests;
-/*
+
+import com.patchwork.app.peer_tests.adapters.AdaptedTimeBoard;
+import com.patchwork.app.peer_tests.adapters.TimeToken;
 import org.junit.Assert;
 import org.junit.Test;
-import patchwork.core.model.timeboard.TimeBoard;
-import patchwork.core.model.tokens.TimeToken;
 
 public class TimeBoardTest {
     @Test
     public void testAdvanceTimeToken() {
-        TimeBoard timeBoard = new TimeBoard(3);
+        AdaptedTimeBoard timeBoard = new AdaptedTimeBoard(3);
         TimeToken t1 = new TimeToken();
         TimeToken t2 = new TimeToken();
 
@@ -37,4 +37,3 @@ public class TimeBoardTest {
         Assert.assertEquals(2, t2.getPosition());
     }
 }
-*/
