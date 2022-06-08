@@ -5,7 +5,7 @@ import com.patchwork.app.backend.Move;
 public class MockGameInput extends GameInput {
 
     private boolean running;
-    private Move move = Move.WAITING;
+    private Move move;
 
 
     public void updateMove(Move move) {

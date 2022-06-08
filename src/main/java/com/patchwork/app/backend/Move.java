@@ -9,8 +9,7 @@ public enum Move {
     ROTATE_CLOCKWISE,
     ROTATE_COUNTERCLOCKWISE,
 
-    CONFIRM,
-    WAITING;
+    CONFIRM;
 
     public boolean isLeftRight() {
         return this == MOVE_LEFT || this == MOVE_RIGHT;

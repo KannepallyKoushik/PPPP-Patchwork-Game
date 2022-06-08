@@ -17,7 +17,10 @@ public class ScannerInput extends GameInput {
     public void run() {
         while (true) {
             String input = scanner.nextLine();
-            notify(getMoveFromInput(input));
+            Move move = getMoveFromInput(input);
+            if (move != null) {
+                notify();
+            }
         }
     }
 
@@ -35,7 +38,7 @@ public class ScannerInput extends GameInput {
         } else {
             System.out.println("Please enter a valid command");
         }
-        return Move.WAITING;
+        return null;
     }
 }
 
