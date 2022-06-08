@@ -26,6 +26,11 @@ public class AbstractGameTest {
     protected ByteArrayOutputStream tuiOutput;
 
     private void createAndSetGame(GameControllerFactory gameControllerFactory) {
+        if (gameControllerThread != null) {
+            gameController.stop();
+            gameControllerThread.stop();
+        }
+
         gameController = gameControllerFactory.createGameController();
         game = gameControllerFactory.getGame();
         gameInput = (MockGameInput) gameControllerFactory.getGameInput();
@@ -33,10 +38,6 @@ public class AbstractGameTest {
         startingPlayer = game.timeBoard.getCurrentPlayer();
         nextPlayer = game.getOpponent(startingPlayer);
 
-        if (gameControllerThread != null) {
-            gameController.stop();
-            gameControllerThread.stop();
-        }
         gameControllerThread = new Thread(gameController);
         gameControllerThread.start();
     }

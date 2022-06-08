@@ -50,6 +50,10 @@ public class GameController implements GameInputObserver, Runnable {
     }
 
     public void waitUntilGameCycle(int cycle) {
+        if(isFinished) {
+            return;
+        }
+
         try {
             while (gameCycleCounter != cycle) {
                 Thread.sleep(tickSpeed / 2);
@@ -87,11 +91,14 @@ public class GameController implements GameInputObserver, Runnable {
 
             Move move = getMove();
             handleMove(move);
-            incrementGameCycleCounter();
             isFinished = isFinished || game.isFinished();
-        }
 
-        finalizeGame();
+            if(isFinished) {
+                finalizeGame();
+            }
+
+            incrementGameCycleCounter();
+        }
     }
 
     private void finalizeGame() {

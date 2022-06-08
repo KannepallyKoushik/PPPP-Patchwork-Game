@@ -121,6 +121,7 @@ public class GameFlowTest extends AbstractGameTest {
         // Mock player 1 turn, i.e. move to somewhere on the board should end turn as well
         selectFirst();
 
+        Assert.assertEquals(1, game.timeBoard.getPlayerPosition(startingPlayer));
 
         // Check Player2 is now current player, as they are the furthest behind
         assertSame(game.timeBoard.getCurrentPlayer(), nextPlayer);
@@ -300,9 +301,12 @@ public class GameFlowTest extends AbstractGameTest {
 
         makeFinishedGame();
         assertEquals(gameController.gameState.type, GameStateType.FINISHED);
+
         //Try to buy a patch
-        gameInput.updateMove(Move.MOVE_RIGHT);
-        gameInput.updateMove(Move.CONFIRM);
+        executeMoves(
+                Move.MOVE_RIGHT,
+                Move.CONFIRM
+        );
 
         //Assert that state is still finished, i.e. not in pick patch
         assertEquals(gameController.gameState.type, GameStateType.FINISHED);
