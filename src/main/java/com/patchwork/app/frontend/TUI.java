@@ -9,6 +9,7 @@ import com.patchwork.app.backend.QuiltBoard;
 import com.patchwork.app.backend.TimeBoard.SpaceElement;
 import com.patchwork.app.utils.ConsoleColor;
 
+import java.io.PrintStream;
 import java.util.List;
 
 public class TUI {
@@ -34,35 +35,36 @@ public class TUI {
         this.drawQuiltBoardWithPatch(gameState.player.quiltBoard,
                 gameState.patch,
                 gameState.x,
-                gameState.y);
+                gameState.y,
+                System.out);
     }
 
     public void drawPickPatchState(PickPatch gameState) {
-        this.drawQuiltBoard(gameState.player.quiltBoard);
-        this.drawPatches(gameState.options, gameState.options.indexOf(gameState.selectedPatch));
+        this.drawQuiltBoard(gameState.player.quiltBoard, System.out);
+        this.drawPatches(gameState.options, gameState.options.indexOf(gameState.selectedPatch), System.out);
     }
 
     public void drawPickMoveState(PickMove gameState) {
-        this.drawTimeBoard();
-        this.drawQuiltBoard(gameState.player.quiltBoard);
-        this.drawPatches(gameState.patchOptions, -1);
+        this.drawTimeBoard(System.out);
+        this.drawQuiltBoard(gameState.player.quiltBoard, System.out);
+        this.drawPatches(gameState.patchOptions, -1, System.out);
     }
 
-    public void drawQuiltBoard(QuiltBoard quiltBoard) {
+    public void drawQuiltBoard(QuiltBoard quiltBoard, PrintStream out) {
         for(int i=0; i < quiltBoard.spaces.length;i++){
             for(int j=0; j < quiltBoard.spaces[i].length;j++){
-                this.drawQuiltBoardSpace(quiltBoard.spaces[i][j],false);
+                this.drawQuiltBoardSpace(quiltBoard.spaces[i][j],false, out);
             }
-            System.out.println();
+            out.println();
         }
     }
 
     // patchX and patchY are the coordinates from the top-left of the board
-    public void drawQuiltBoardWithPatch(QuiltBoard quiltBoard, Patch patch, int patchX, int patchY) {
+    public void drawQuiltBoardWithPatch(QuiltBoard quiltBoard, Patch patch, int patchX, int patchY, PrintStream out) {
         for(int r = 0; r < quiltBoard.spaces.length; r++) {
             for(int c = 0; c < quiltBoard.spaces[r].length ; c++){
-                Boolean boardSpace = quiltBoard.spaces[r][c];
-                Boolean patchSpace = false;
+                boolean boardSpace = quiltBoard.spaces[r][c];
+                boolean patchSpace = false;
 
                 // Check if current space is within bounds of the patch
                 if(r-patchY >= 0 &&
@@ -72,120 +74,120 @@ public class TUI {
                     // Check the state of this space of the patch
                     patchSpace = patch.spaces.get(r-patchY).get(c-patchX);
                 }
-                this.drawQuiltBoardSpace(boardSpace, patchSpace);
+                this.drawQuiltBoardSpace(boardSpace, patchSpace, out);
             }
-            System.out.println();
+            out.println();
         }
     }
 
-    public void drawTimeBoard() {
+    public void drawTimeBoard(PrintStream out) {
         if(this.game.timeBoard.spaces.size() != 52) return; // TO DO: Implement drawTimeBoard for variable sizes
 
-        this.drawTimeBoardBorder(13, 0);
-        this.drawTimeBoardSpaces(13, 0, 0, false);
-        this.drawTimeBoardBorder(13, 0);
-        this.drawTimeBoardSpaces(1, 13, 12, false);
-        this.drawTimeBoardBorder(13, 0);
-        this.drawTimeBoardSpaces(13, 14, 0, true);
-        this.drawTimeBoardBorder(13, 0);
-        this.drawTimeBoardSpaces(1, 27, 0, false);
-        this.drawTimeBoardBorder(13, 0);
-        this.drawTimeBoardSpaces(13, 28, 0, false);
-        this.drawTimeBoardBorder(13, 0);
-        this.drawTimeBoardSpaces(1, 41, 12, false);
-        this.drawTimeBoardBorder(10, 3);
-        this.drawTimeBoardSpaces(10, 42, 3, true);
-        this.drawTimeBoardBorder(10, 3);
+        this.drawTimeBoardBorder(13, 0, out);
+        this.drawTimeBoardSpaces(13, 0, 0, false, out);
+        this.drawTimeBoardBorder(13, 0, out);
+        this.drawTimeBoardSpaces(1, 13, 12, false, out);
+        this.drawTimeBoardBorder(13, 0, out);
+        this.drawTimeBoardSpaces(13, 14, 0, true, out);
+        this.drawTimeBoardBorder(13, 0, out);
+        this.drawTimeBoardSpaces(1, 27, 0, false, out);
+        this.drawTimeBoardBorder(13, 0, out);
+        this.drawTimeBoardSpaces(13, 28, 0, false, out);
+        this.drawTimeBoardBorder(13, 0, out);
+        this.drawTimeBoardSpaces(1, 41, 12, false, out);
+        this.drawTimeBoardBorder(10, 3, out);
+        this.drawTimeBoardSpaces(10, 42, 3, true, out);
+        this.drawTimeBoardBorder(10, 3, out);
     }
 
-    public void drawPatches(List<Patch> patches, int selected) {
-        System.out.println("               Available patches:");
-        System.out.println();
+    public void drawPatches(List<Patch> patches, int selected, PrintStream out) {
+        out.println("               Available patches:");
+        out.println();
 
         for(int i = 0; i < 3; i++) {
-            System.out.print("              ");
+            out.print("              ");
             for(int p = 0; p < patches.size(); p++) {
-                System.out.print(p == selected ? ConsoleColor.GREEN : ConsoleColor.WHITE);
+                out.print(p == selected ? ConsoleColor.GREEN : ConsoleColor.WHITE);
 
-                this.drawPatchLine(patches.get(p), i);
+                this.drawPatchLine(patches.get(p), i, out);
 
-                System.out.print("  ");
+                out.print("  ");
             }
-            System.out.println(ConsoleColor.WHITE);
+            out.println(ConsoleColor.WHITE);
         }
 
-        System.out.print("Button cost:");
+        out.print("Button cost:");
         for(Patch patch : patches) {
-            System.out.format("%5s", patch.buttonCost);
-            System.out.print("  ");
+            out.format("%5s", patch.buttonCost);
+            out.print("  ");
         }
-        System.out.println();
+        out.println();
 
-        System.out.print("Time cost:  ");
+        out.print("Time cost:  ");
         for(Patch patch : patches) {
-            System.out.format("%5s", patch.timeTokenCost);
-            System.out.print("  ");
+            out.format("%5s", patch.timeTokenCost);
+            out.print("  ");
         }
-        System.out.println();
+        out.println();
 
-        System.out.print("Income:     ");
+        out.print("Income:     ");
         for(Patch patch : patches) {
-            System.out.format("%5s", patch.buttonScore);
-            System.out.print("  ");
+            out.format("%5s", patch.buttonScore);
+            out.print("  ");
         }
-        System.out.println();
+        out.println();
     }
 
-    private void drawQuiltBoardSpace(boolean hasPatch, boolean placingPatch) {
+    private void drawQuiltBoardSpace(boolean hasPatch, boolean placingPatch, PrintStream out) {
         if(hasPatch) {
-            System.out.print(placingPatch ? ConsoleColor.RED : ConsoleColor.BLUE);
+            out.print(placingPatch ? ConsoleColor.RED : ConsoleColor.BLUE);
         } else {
-            System.out.print(placingPatch ? ConsoleColor.GREEN : ConsoleColor.WHITE);
+            out.print(placingPatch ? ConsoleColor.GREEN : ConsoleColor.WHITE);
         }
-        System.out.print(SPACE_CHAR + " ");
+        out.print(SPACE_CHAR + " ");
     }
 
-    private void drawTimeBoardBorder(int numSpaces, int spacesOffset) {
+    private void drawTimeBoardBorder(int numSpaces, int spacesOffset, PrintStream out) {
         for(int i = 0; i < spacesOffset; i++) {
-            System.out.print("      ");
+            out.print("      ");
         }
 
         for(int i = 0; i < numSpaces; i++) {
-            System.out.print("+-----");
+            out.print("+-----");
         }
-        System.out.println("+");
+        out.println("+");
     }
 
-    private void drawTimeBoardSpaces(int numSpaces, int startSpace, int spacesOffset, boolean reverse) {
+    private void drawTimeBoardSpaces(int numSpaces, int startSpace, int spacesOffset, boolean reverse, PrintStream out) {
         for(int j = 0; j < 2; j++) {
             for (int i = 0; i < spacesOffset; i++) {
-                System.out.print("      ");
+                out.print("      ");
             }
 
             for (int i = 0; i < numSpaces; i++) {
                 int spaceIndex = reverse ? (numSpaces + startSpace - i - 1) : (startSpace + i);
 
-                this.drawTimeBoardSpace(spaceIndex, j);
+                this.drawTimeBoardSpace(spaceIndex, j, out);
             }
-            System.out.println("|");
+            out.println("|");
         }
     }
 
-    private void drawTimeBoardSpace(int spaceIndex, int row) {
+    private void drawTimeBoardSpace(int spaceIndex, int row, PrintStream out) {
         List<SpaceElement> space = game.timeBoard.spaces.get(spaceIndex);
 
-        System.out.print("|");
+        out.print("|");
 
         if((space.size() == 1 && row == 1)) {
-            System.out.format("%5s", this.getSpaceElementName(space.get(0)));
+            out.format("%5s", this.getSpaceElementName(space.get(0)));
         } else if(space.size() == 2) {
-            System.out.format("%5s", this.getSpaceElementName(space.get(row)));
+            out.format("%5s", this.getSpaceElementName(space.get(row)));
         } else {
-            System.out.print("     ");
+            out.print("     ");
         }
     }
 
-    private void drawPatchLine(Patch patch, int row) {
+    private void drawPatchLine(Patch patch, int row, PrintStream out) {
         StringBuilder patchRow = new StringBuilder();
 
         if(patch.spaces.size() > row) {
@@ -194,7 +196,7 @@ public class TUI {
             }
         }
 
-        System.out.format("%5s", patchRow);
+        out.format("%5s", patchRow);
     }
 
     private String getSpaceElementName(SpaceElement spaceElement) {
