@@ -161,6 +161,10 @@ public class Game {
             throw new GameException("Player cannot afford this patch");
         }
 
+        return performPlacingPatch(player, patch, x,y);
+    }
+
+    public MoveResult performPlacingPatch(Player player, Patch patch,int x, int y) throws GameException {
         player.payButtons(patch.buttonCost);
         player.quiltBoard.placePatch(patch, x, y);
         patchList.removePatch(patch);
@@ -170,15 +174,9 @@ public class Game {
         player.addButtons(result.getNrButtons());
 
         // Award special tile if obtained
-        if (specialTilePlayer == null && player.quiltBoard.hasSevenBySeven()) {
-            specialTilePlayer = player;
-        }
-
+        if (specialTilePlayer == null && player.quiltBoard.hasSevenBySeven()) specialTilePlayer = player;
         // Finalize the game if all players have reached the end of the time board.
-        if (gameShouldFinish()) {
-            finalizeGame();
-        }
-
+        if (gameShouldFinish()) finalizeGame();
         return result;
     }
 
