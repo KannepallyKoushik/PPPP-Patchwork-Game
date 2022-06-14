@@ -6,36 +6,48 @@
 # Note that environment variables can be set in several places
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 stages:
-- test
-- build
+  - test
+  - build
+  - analyze
+
 sast:
   variables:
     SAST_EXCLUDED_ANALYZERS: bandit, brakeman, eslint, flawfinder, gosec, kubesec,
       nodejs-scan, phpcs-security-audit, pmd-apex, security-code-scan, semgrep, sobelow
   stage: test
 include:
-- template: Security/SAST.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
+
+test:
+  image: maven:3.8.5-openjdk-18
+  stage: test
+  tags:
+    - pppp
+  script:
+    - mvn test
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml
 
 build:
   image: maven:3.8.5-openjdk-18
   stage: build
   tags:
-  - pppp
+    - pppp
   script:
-  - mvn jar:jar
+    - mvn jar:jar
   artifacts:
     when: always
     paths:
-    - target/*.jar
-test:
-  image: maven:3.8.5-openjdk-18
-  stage: test
-  tags:
-  - pppp
+      - target/*.jar
+
+analyze:
+  stage: analyze
   script:
-  - mvn test
+    - mvn site
   artifacts:
     when: always
-    reports:
-      junit:
-      - target/surefire-reports/TEST-*.xml
+    paths:
+      - target/site/*
