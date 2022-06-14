@@ -44,7 +44,10 @@ build:
       - target/*.jar
 
 analyze:
+  image: maven:3.8.5-openjdk-18
   stage: analyze
+  tags:
+    - pppp
   script:
     - mvn site
   artifacts:
