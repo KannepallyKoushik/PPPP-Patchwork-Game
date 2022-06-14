@@ -78,7 +78,6 @@ public class QuiltBoard {
     @param y        The top most coordinate of the matrix space which you want to place
      */
     public void placePatch(Patch patch, int x, int y) throws GameException {
-
         //Determine if patch can be placed
         if (canPlace(patch, x, y)) {
             //Make a list of all the coordinates of the patch
@@ -106,38 +105,42 @@ public class QuiltBoard {
         for (int i = 1; i < spaces.length; i++) {
             //If at any point a 7x7 matrix is full, return true, as it might get reset if last 2 rows are empty
             //Count only y here because for y to increment x has to >=7
-            if (consecutiveCounter >= 7) {
-                return true;
-            }
-            int xCount = 1;
-            //Loop to determine if there are 7 consecutive trues horizontal
-            for (int j = 1; j < spaces[i].length; j++) {
-                if (spaces[i][j] == spaces[i][j - 1] && spaces[i][j]) {
-                    xCount += 1;
-                } else if (xCount < 7) {
-                    //Reset counter, need 7 consecutive trues
-                    xCount = 1;
-                }
-            }
+            if (consecutiveCounter >= 7) return true;
+            int xCount = determineSevenHorizontalTrues(i);
             //If there are more than or equal 7 consecutive horizontal, check if these also correspond vertically
             if (xCount >= 7) {
-                int yCount = 0;
-                for (int j = 0; j < spaces[i].length; j++) {
-                    if (spaces[i][j] == spaces[i - 1][j] && spaces[i][j]) {
-                        yCount += 1;
-                    } else if (yCount < 7) {
-                        yCount = 1;
-                    }
-                }
-                if (yCount >= 7){
-                    consecutiveCounter +=1;
-                } else{
-                    consecutiveCounter = 1;
-                }
+                int yCount = determineSevenVerticalTrues(i);
+                if (yCount >= 7) consecutiveCounter +=1;
+                else consecutiveCounter = 1;
             }
         }
-
         return false;
+    }
+
+    public int determineSevenHorizontalTrues(int i){
+        int xCount = 1;
+        //Loop to determine if there are 7 consecutive trues horizontal
+        for (int j = 1; j < spaces[i].length; j++) {
+            if (spaces[i][j] == spaces[i][j - 1] && spaces[i][j]) {
+                xCount += 1;
+            } else if (xCount < 7) {
+                //Reset counter, need 7 consecutive trues
+                xCount = 1;
+            }
+        }
+        return xCount;
+    }
+
+    public int determineSevenVerticalTrues(int i){
+        int yCount = 0;
+        for (int j = 0; j < spaces[i].length; j++) {
+            if (spaces[i][j] == spaces[i - 1][j] && spaces[i][j]) {
+                yCount += 1;
+            } else if (yCount < 7) {
+                yCount = 1;
+            }
+        }
+        return yCount;
     }
 
     /**
