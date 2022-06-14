@@ -49,6 +49,7 @@ analyze:
   tags:
     - pppp
   script:
+    - mvn install
     - mvn site
   artifacts:
     when: always
