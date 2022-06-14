@@ -1,4 +1,4 @@
-package com.patchwork.app.peer_tests.adapters;
+package com.patchwork.app.adapters;
 
 public interface IPatch {
     boolean[][] getShape();

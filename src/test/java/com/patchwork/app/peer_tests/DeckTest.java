@@ -1,10 +1,10 @@
-package com.patchwork.app.peer_tests.tests;
+package com.patchwork.app.peer_tests;
 
 import org.junit.Assert;
 import org.junit.Test;
-import com.patchwork.app.peer_tests.adapters.Deck;
-import com.patchwork.app.peer_tests.adapters.PurchasablePatch;
-import com.patchwork.app.peer_tests.adapters.PatchToken;
+import com.patchwork.app.adapters.Deck;
+import com.patchwork.app.adapters.PurchasablePatch;
+import com.patchwork.app.adapters.PatchToken;
 
 public class DeckTest {
     private void buildDeck(PurchasablePatch[] patches, Deck deck) {

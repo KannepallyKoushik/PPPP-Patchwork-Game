@@ -1,7 +1,7 @@
-package com.patchwork.app.peer_tests.tests;
+package com.patchwork.app.peer_tests;
 
-import com.patchwork.app.peer_tests.adapters.AdaptedTimeBoard;
-import com.patchwork.app.peer_tests.adapters.TimeToken;
+import com.patchwork.app.adapters.AdaptedTimeBoard;
+import com.patchwork.app.adapters.TimeToken;
 import org.junit.Assert;
 import org.junit.Test;
 

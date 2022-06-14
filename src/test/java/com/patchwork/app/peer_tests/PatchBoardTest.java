@@ -1,8 +1,8 @@
-package com.patchwork.app.peer_tests.tests;
+package com.patchwork.app.peer_tests;
 
-import com.patchwork.app.peer_tests.adapters.LeatherPatch;
-import com.patchwork.app.peer_tests.adapters.PurchasablePatch;
-import com.patchwork.app.peer_tests.adapters.PatchBoard;
+import com.patchwork.app.adapters.LeatherPatch;
+import com.patchwork.app.adapters.PurchasablePatch;
+import com.patchwork.app.adapters.PatchBoard;
 import org.junit.Assert;
 import org.junit.Test;
 

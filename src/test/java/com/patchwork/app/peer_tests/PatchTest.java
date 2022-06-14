@@ -1,7 +1,7 @@
-package com.patchwork.app.peer_tests.tests;
+package com.patchwork.app.peer_tests;
 
-import com.patchwork.app.peer_tests.adapters.IPatch;
-import com.patchwork.app.peer_tests.adapters.PurchasablePatch;
+import com.patchwork.app.adapters.IPatch;
+import com.patchwork.app.adapters.PurchasablePatch;
 import org.junit.Test;
 
 import java.util.Arrays;

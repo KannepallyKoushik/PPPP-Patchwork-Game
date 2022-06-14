@@ -1,8 +1,8 @@
-package com.patchwork.app.peer_tests.tests;
+package com.patchwork.app.peer_tests;
 
 import com.patchwork.app.backend.Player;
-import com.patchwork.app.peer_tests.adapters.AdaptedGame;
-import com.patchwork.app.peer_tests.adapters.PlayerType;
+import com.patchwork.app.adapters.AdaptedGame;
+import com.patchwork.app.adapters.PlayerType;
 import org.junit.Assert;
 import org.junit.Test;
 

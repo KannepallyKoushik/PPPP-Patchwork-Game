@@ -1,4 +1,4 @@
-package com.patchwork.app.peer_tests.adapters;
+package com.patchwork.app.adapters;
 
 public abstract class AbstractToken {
     private int position = 0;

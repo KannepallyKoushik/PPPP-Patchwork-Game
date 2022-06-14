@@ -1,4 +1,4 @@
-package com.patchwork.app.peer_tests.adapters;
+package com.patchwork.app.adapters;
 
 import com.patchwork.app.backend.GameFactory;
 import com.patchwork.app.backend.TimeBoard;

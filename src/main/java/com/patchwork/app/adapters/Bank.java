@@ -1,4 +1,4 @@
-package com.patchwork.app.peer_tests.adapters;
+package com.patchwork.app.adapters;
 
 public class Bank {
     private int credits = 162;
