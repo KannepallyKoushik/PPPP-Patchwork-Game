@@ -19,7 +19,7 @@ public class ScannerInput extends GameInput {
             String input = scanner.nextLine();
             Move move = getMoveFromInput(input);
             if (move != null) {
-                notify();
+                notify(move);
             }
         }
     }
