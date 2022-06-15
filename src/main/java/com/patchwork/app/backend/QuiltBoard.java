@@ -105,7 +105,9 @@ public class QuiltBoard {
         for (int i = 1; i < spaces.length; i++) {
             //If at any point a 7x7 matrix is full, return true, as it might get reset if last 2 rows are empty
             //Count only y here because for y to increment x has to >=7
-            if (consecutiveCounter >= 7) return true;
+            if (consecutiveCounter >= 7) {
+                return true;
+            }
             int xCount = determineSevenHorizontalTrues(i);
             //If there are more than or equal 7 consecutive horizontal, check if these also correspond vertically
             if (xCount >= 7) {
@@ -117,7 +119,7 @@ public class QuiltBoard {
         return false;
     }
 
-    public int determineSevenHorizontalTrues(int i){
+    private int determineSevenHorizontalTrues(int i){
         int xCount = 1;
         //Loop to determine if there are 7 consecutive trues horizontal
         for (int j = 1; j < spaces[i].length; j++) {
@@ -131,7 +133,7 @@ public class QuiltBoard {
         return xCount;
     }
 
-    public int determineSevenVerticalTrues(int i){
+    private int determineSevenVerticalTrues(int i){
         int yCount = 0;
         for (int j = 0; j < spaces[i].length; j++) {
             if (spaces[i][j] == spaces[i - 1][j] && spaces[i][j]) {
