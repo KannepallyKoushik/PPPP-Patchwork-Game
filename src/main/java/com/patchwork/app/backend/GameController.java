@@ -3,6 +3,8 @@ package com.patchwork.app.backend;
 import com.patchwork.app.backend.Exceptions.GameException;
 import com.patchwork.app.backend.GameStates.*;
 import com.patchwork.app.backend.Inputs.GameInput;
+import com.patchwork.app.backend.Inputs.KeyInput;
+import com.patchwork.app.backend.Inputs.ScannerInput;
 import com.patchwork.app.frontend.TUI;
 
 import java.util.List;
@@ -50,7 +52,7 @@ public class GameController implements GameInputObserver, Runnable {
     }
 
     public void waitUntilGameCycle(int cycle) {
-        if(isFinished) {
+        if (isFinished) {
             return;
         }
 
@@ -93,7 +95,7 @@ public class GameController implements GameInputObserver, Runnable {
             handleMove(move);
             isFinished = isFinished || game.isFinished();
 
-            if(isFinished) {
+            if (isFinished) {
                 finalizeGame();
             }
 
@@ -110,16 +112,24 @@ public class GameController implements GameInputObserver, Runnable {
     }
 
     private void handleMove(Move move) throws GameException {
-        switch (gameState.type) {
-            case PICK_MOVE:
-                handlePickMove((PickMove) gameState, move);
-                break;
-            case PICK_PATCH:
-                handlePickPatch((PickPatch) gameState, move);
-                break;
-            case PLACE_PATCH:
-                handlePlacePatch((PlacePatch) gameState, move);
-                break;
+        if (move.equals(Move.HELP)) {
+            if (gameInput instanceof ScannerInput){
+                System.out.println(((ScannerInput) gameInput).getScannerCommands().getInputs());
+            } else if (gameInput instanceof KeyInput){
+                System.out.println(((KeyInput) gameInput).getKeyCommands().getMoves());
+            }
+        } else {
+            switch (gameState.type) {
+                case PICK_MOVE:
+                    handlePickMove((PickMove) gameState, move);
+                    break;
+                case PICK_PATCH:
+                    handlePickPatch((PickPatch) gameState, move);
+                    break;
+                case PLACE_PATCH:
+                    handlePlacePatch((PlacePatch) gameState, move);
+                    break;
+            }
         }
     }
 
@@ -171,6 +181,8 @@ public class GameController implements GameInputObserver, Runnable {
             handlePlacePatchMovePatch(gameState, move);
         } else if (move.isRotate()) {
             handlePlacePatchRotatePatch(gameState, move);
+        } else if (move.isMirror()) {
+            handlePlacePatchMirrorPatch(gameState, move);
         } else if (move == Move.CONFIRM) {
             if (!gameState.player.quiltBoard.canPlace(gameState.patch, gameState.x, gameState.y)) {
                 drawMessage("Cannot place patch here");
@@ -219,9 +231,24 @@ public class GameController implements GameInputObserver, Runnable {
         this.gameState = new PlacePatch(gameState.player, patch, gameState.x, gameState.y);
     }
 
+    private void handlePlacePatchMirrorPatch(PlacePatch gameState, Move move) {
+        Patch patch = gameState.patch;
+
+        switch (move) {
+            case MIRROR_HORIZONTAL:
+                patch = patch.mirrorUp();
+                break;
+            case MIRROR_VERTICAL:
+                patch = patch.mirrorSide();
+                break;
+        }
+
+        this.gameState = new PlacePatch(gameState.player, patch, gameState.x, gameState.y);
+    }
+
     // Utilities
     private static <T> T handleSelectMove(Move move, T selected, List<T> options) {
-        if(!move.isLeftRight()) {
+        if (!move.isLeftRight()) {
             throw new RuntimeException("Cannot handle move which is not either left or right");
         }
 

@@ -9,6 +9,11 @@ public enum Move {
     ROTATE_CLOCKWISE,
     ROTATE_COUNTERCLOCKWISE,
 
+    MIRROR_VERTICAL,
+    MIRROR_HORIZONTAL,
+
+    HELP,
+
     CONFIRM;
 
     public boolean isLeftRight() {
@@ -22,4 +27,6 @@ public enum Move {
     public boolean isRotate() {
         return this == ROTATE_CLOCKWISE || this == ROTATE_COUNTERCLOCKWISE;
     }
+
+    public boolean isMirror() { return this == MIRROR_HORIZONTAL || this == MIRROR_VERTICAL;}
 }

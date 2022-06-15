@@ -8,10 +8,13 @@ import java.util.Scanner;
 public class ScannerInput extends GameInput {
 
     private final Scanner scanner;
+    private final ScannerCommands scannerCommands;
 
     public ScannerInput() {
         scanner = new Scanner(System.in);
+        scannerCommands = new ScannerCommandsFactory().createScannerCommands();
     }
+
 
     @Override
     public void run() {
@@ -19,26 +22,24 @@ public class ScannerInput extends GameInput {
             String input = scanner.nextLine();
             Move move = getMoveFromInput(input);
             if (move != null) {
-                notify();
+                notify(move);
             }
         }
     }
 
     public Move getMoveFromInput(String input) {
-        if (input.equals("CONFIRM")) {
-            return Move.CONFIRM;
-        } else if (input.equals("LEFT")) {
-            return Move.MOVE_LEFT;
-        } else if (input.equals("RIGHT")) {
-            return Move.MOVE_RIGHT;
-        } else if (input.equals("UP")) {
-            return Move.MOVE_UP;
-        } else if (input.equals("DOWN")) {
-            return Move.MOVE_DOWN;
-        } else {
-            System.out.println("Please enter a valid command");
+        Move move = scannerCommands.getScannerCommands().get(input);
+        if (move == null){
+            System.out.println("Please enter a valid command; see list of commands with HELP");
+            return null;
         }
-        return null;
+        else {
+            return move;
+        }
+    }
+
+    public ScannerCommands getScannerCommands(){
+        return this.scannerCommands;
     }
 }
 
