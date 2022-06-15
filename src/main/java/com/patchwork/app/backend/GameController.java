@@ -1,5 +1,6 @@
 package com.patchwork.app.backend;
 
+import com.patchwork.app.MoveResult;
 import com.patchwork.app.backend.Exceptions.GameException;
 import com.patchwork.app.backend.GameStates.*;
 import com.patchwork.app.backend.Inputs.GameInput;
@@ -13,18 +14,19 @@ public class GameController implements GameInputObserver, Runnable {
 
     private int tickSpeed = 50;
 
-    private TUI textUI;
+    private final TUI textUI;
     public Game game;
     public GameInput gameInput;
 
-    private boolean turnFinished = false;
     public boolean isFinished = false;
 
     public GameState gameState;
     private Move gameInputMove = null;
     private int gameCycleCounter = 0;
+    private int specialPatchesCounter = 0;
+    private final PatchFactory patchFactory;
 
-    private Thread gameInputThread = null;
+    private final Thread gameInputThread;
 
     public GameController(Game game, TUI textUI, GameInput gameInput) {
         this.game = game;
@@ -33,6 +35,7 @@ public class GameController implements GameInputObserver, Runnable {
         this.gameInput.subscribe(this);
         this.gameInputThread = new Thread(gameInput);
         this.gameState = null;
+        this.patchFactory = new PatchFactory();
     }
 
     private Player currentPlayer() {
@@ -139,18 +142,19 @@ public class GameController implements GameInputObserver, Runnable {
             PickMove.MoveOption selectedOption = handleSelectMove(move, gameState.selectedOption, gameState.moveOptions);
             this.gameState = new PickMove(gameState.player, selectedOption, gameState.patchOptions);
         } else if (move == Move.CONFIRM) {
-            handlePickMoveConfirm(gameState, move);
+            handlePickMoveConfirm(gameState);
         } else {
             drawInvalidInput();
         }
     }
 
-    private void handlePickMoveConfirm(PickMove gameState, Move move) throws GameException {
+    private void handlePickMoveConfirm(PickMove gameState) throws GameException {
         if (gameState.selectedOption == PickMove.MoveOption.PLACE_PATCH) {
             List<Patch> availablePatches = game.patchList.getAvailablePatches();
             this.gameState = new PickPatch(gameState.player, availablePatches, availablePatches.get(0));
         } else {
-            game.movePastNextPlayer(currentPlayer());
+            MoveResult moveResult = game.movePastNextPlayer(currentPlayer());
+            finalizeMove(gameState.player, moveResult);
         }
     }
 
@@ -169,7 +173,7 @@ public class GameController implements GameInputObserver, Runnable {
     private void handlePickPatchConfirm(PickPatch gameState) {
         if (gameState.selectedPatch.buttonCost > gameState.player.nrButtons) {
             drawMessage("Cannot afford patch!");
-            this.gameState = new PickMove(gameState.player, game.patchList.getAvailablePatches());
+            finalizeMove(gameState.player, null);
         } else {
             this.gameState = new PlacePatch(gameState.player, gameState.selectedPatch, 0, 0);
         }
@@ -188,8 +192,8 @@ public class GameController implements GameInputObserver, Runnable {
                 drawMessage("Cannot place patch here");
                 return;
             }
-            game.placePatch(gameState.player, gameState.patch, gameState.x, gameState.y);
-            this.gameState = new PickMove(gameState.player, game.patchList.getAvailablePatches());
+            MoveResult moveResult = game.placePatch(gameState.player, gameState.patch, gameState.x, gameState.y);
+            finalizeMove(gameState.player, moveResult);
         } else {
             drawInvalidInput();
         }
@@ -246,6 +250,21 @@ public class GameController implements GameInputObserver, Runnable {
         this.gameState = new PlacePatch(gameState.player, patch, gameState.x, gameState.y);
     }
 
+    // Handler for the result of a move
+    private void finalizeMove(Player player, MoveResult moveResult) {
+        if (moveResult != null) {
+            specialPatchesCounter += moveResult.getNrSpecialPatches();
+            drawMoveResult(moveResult);
+
+            if (specialPatchesCounter != 0) {
+                gameState = new PlacePatch(player, patchFactory.createSpecialPatch(), 0, 0);
+                specialPatchesCounter--;
+                return;
+            }
+        }
+        gameState = new PickMove(game.timeBoard.getCurrentPlayer(), game.patchList.getAvailablePatches());
+    }
+
     // Utilities
     private static <T> T handleSelectMove(Move move, T selected, List<T> options) {
         if (!move.isLeftRight()) {
@@ -287,6 +306,16 @@ public class GameController implements GameInputObserver, Runnable {
 
     private void drawInvalidInput() {
         textUI.drawMessage("Invalid input!");
+    }
+
+    private void drawMoveResult(MoveResult moveResult) {
+        drawMessage(
+                String.format(
+                        "You obtained %d buttons and %d special patches",
+                        moveResult.getNrButtons(),
+                        moveResult.getNrSpecialPatches()
+                )
+        );
     }
 
     public void update(Move move) {
