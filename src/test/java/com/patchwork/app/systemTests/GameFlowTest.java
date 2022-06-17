@@ -186,12 +186,17 @@ public class GameFlowTest extends AbstractGameTest {
     they still cant place a patch in an invalid location as an exception gets thrown and nothing happens to the game
     So the system still has proper checks beyond just input checking
      */
-    @Test(expected = GameException.class)
-    public void testPlacePatchInvalidLocation() throws GameException {
+    @Test
+    public void testPlacePatchInvalidLocation()  {
 
         Patch patch = game.patchList.getAvailablePatches().get(0);
 
-        game.placePatch(startingPlayer, patch, -1, -1);
+
+        assertThrows(
+                GameException.class,
+                () -> {
+                    game.placePatch(startingPlayer, patch, -1, -1);
+                });
 
         //Assert the patch did not get placed
         assertEquals(0, startingPlayer.quiltBoard.patches.size());

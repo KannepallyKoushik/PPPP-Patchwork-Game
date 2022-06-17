@@ -8,6 +8,9 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+
 public class GameTest extends AbstractGameTest {
 
     private static Game makeFinishedGame() {
@@ -74,42 +77,62 @@ public class GameTest extends AbstractGameTest {
         Assert.assertEquals(player1, game.specialTilePlayer);
     }
 
-    @Test(expected = GameException.class)
-    public void testPlacePatchInvalidLocation() throws GameException {
+    @Test
+    public void testPlacePatchInvalidLocation()  {
         Player currentPlayer = game.timeBoard.getCurrentPlayer();
         Patch patch = game.patchList.getAvailablePatches().get(0);
 
-        game.placePatch(currentPlayer, patch, -1, -1);
+        assertThrows(
+                GameException.class,
+                () -> {
+                    game.placePatch(currentPlayer, patch, -1, -1);
+                });
+        assertEquals(0,currentPlayer.quiltBoard.patches.size());
     }
 
-    @Test(expected = GameException.class)
+    @Test
     public void testPlacePatchOverlap() throws GameException {
         Player currentPlayer = game.timeBoard.getCurrentPlayer();
         Patch patch = game.patchList.getAvailablePatches().get(0);
 
         game.placePatch(currentPlayer, patch, 0, 0);
 
-        patch = game.patchList.getAvailablePatches().get(0);
-        game.placePatch(currentPlayer, patch, 0, 0); // Place the patch in the same location as the previous one
+        assertEquals(1,currentPlayer.quiltBoard.patches.size());
+        assertThrows(
+                GameException.class,
+                () -> {
+                    game.placePatch(currentPlayer, patch, 0, 0);
+                });
+        assertEquals(1,currentPlayer.quiltBoard.patches.size());
     }
 
-    @Test(expected = GameException.class)
+    @Test
     public void testPlacePatchNotEnoughButtons() throws GameException {
         Player currentPlayer = game.timeBoard.getCurrentPlayer();
         currentPlayer.nrButtons = 0; // Set nrButtons to 0 so the player cant afford the patch
         Patch patch = game.patchList.getAvailablePatches().get(0);
 
-        game.placePatch(currentPlayer, patch, 0, 0);
+        assertThrows(
+                GameException.class,
+                () -> {
+                    game.placePatch(currentPlayer, patch, 0, 0);
+                });
+        assertEquals(0,currentPlayer.quiltBoard.patches.size());
     }
 
-    @Test(expected = GameException.class)
-    public void testPlacePatchGameFinished() throws GameException {
+    @Test
+    public void testPlacePatchGameFinished() {
         Game game = makeFinishedGame();
 
         Player player = game.players.get(0);
         Patch patch = game.patchList.getAvailablePatches().get(0);
 
-        game.placePatch(player, patch, 0, 0);
+        assertThrows(
+                GameException.class,
+                () -> {
+                    game.placePatch(player, patch, 0, 0);
+                });
+        assertEquals(0,player.quiltBoard.patches.size());
     }
 
     @Test
@@ -123,21 +146,32 @@ public class GameTest extends AbstractGameTest {
         Assert.assertEquals(11, game.timeBoard.getPlayerPosition(player2));
     }
 
-    @Test(expected = GameException.class)
+    @Test
     public void testMovePastNextPlayerBehind() throws GameException {
         Player player = game.players.get(1);
 
         game.timeBoard.movePlayer(player, 1);
 
-        game.movePastNextPlayer(player);
+
+        assertThrows(
+                GameException.class,
+                () -> {
+                    game.movePastNextPlayer(player);
+                });
+        assertEquals(1, game.timeBoard.getPlayerPosition(player));
     }
 
-    @Test(expected = GameException.class)
-    public void testMovePastNextPlayerGameFinished() throws GameException {
+    @Test
+    public void testMovePastNextPlayerGameFinished() {
         Game game = makeFinishedGame();
 
         Player player = game.timeBoard.getCurrentPlayer();
 
-        game.movePastNextPlayer(player);
+        assertThrows(
+                GameException.class,
+                () -> {
+                    game.movePastNextPlayer(player);
+                });
+        assertEquals(51, game.timeBoard.getPlayerPosition(player));
     }
 }
