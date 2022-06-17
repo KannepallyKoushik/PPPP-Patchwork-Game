@@ -4,7 +4,6 @@ import com.patchwork.app.MoveResult;
 import com.patchwork.app.backend.Exceptions.GameException;
 import com.patchwork.app.backend.GameStates.*;
 import com.patchwork.app.backend.Inputs.GameInput;
-import com.patchwork.app.backend.Inputs.KeyInput;
 import com.patchwork.app.backend.Inputs.ScannerInput;
 import com.patchwork.app.frontend.TUI;
 
@@ -118,8 +117,6 @@ public class GameController implements GameInputObserver, Runnable {
         if (move.equals(Move.HELP)) {
             if (gameInput instanceof ScannerInput){
                 System.out.println(((ScannerInput) gameInput).getScannerCommands().getInputs());
-            } else if (gameInput instanceof KeyInput){
-                System.out.println(((KeyInput) gameInput).getKeyCommands().getMoves());
             }
         } else {
             switch (gameState.type) {
