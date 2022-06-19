@@ -1,7 +1,7 @@
 package com.patchwork.app.adapters;
 
-import com.patchwork.app.backend.Patch;
-import com.patchwork.app.backend.PatchList;
+import com.patchwork.app.backend.model.Patch;
+import com.patchwork.app.backend.model.PatchList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ public class Deck extends PatchList {
     private final PatchToken patchToken = new PatchToken();
 
     public Deck(boolean init) {
-        super(new ArrayList<Patch>());
+        super(new ArrayList<>());
     }
 
     public void addPatch(PurchasablePatch patch) {

@@ -1,7 +1,10 @@
 package external;
 
-import com.patchwork.app.backend.*;
-import com.patchwork.app.backend.Exceptions.GameException;
+import com.patchwork.app.backend.exceptions.GameException;
+import com.patchwork.app.backend.model.Game;
+import com.patchwork.app.backend.model.GameFactory;
+import com.patchwork.app.backend.model.Patch;
+import com.patchwork.app.backend.model.Player;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -123,7 +126,8 @@ public class ExternalTests {
     //Implement required test 4, picking and placing patch
     @Test
     public void placePatchTest() throws GameException {
-
+        //Add buttons to startingPlayer to ensure that they can always buy patches
+        startingPlayer.addButtons(100);
         //Get random patch from 0-2
         int randomIndex = (int) (Math.random() * 2);
         Patch patch = game.patchList.getAvailablePatches().get(randomIndex);
@@ -148,17 +152,18 @@ public class ExternalTests {
     they still cant place a patch in an invalid location as an exception gets thrown and nothing happens to the game
     So the system still has proper checks beyond just input checking
      */
-    @Test(expected = GameException.class)
-    public void testPlacePatchInvalidLocation() throws GameException {
-
+    @Test
+    public void testPlacePatchInvalidLocation()  {
+        //Add buttons to startingPlayer to ensure that they can always buy patches
+        startingPlayer.addButtons(100);
         Patch patch = game.patchList.getAvailablePatches().get(0);
 
-        game.placePatch(startingPlayer, patch, -1, -1);
+        assertThrows(
+                GameException.class,
+                () -> game.placePatch(startingPlayer, patch, -1, -1));
 
         //Assert the patch did not get placed
         assertEquals(0, startingPlayer.quiltBoard.patches.size());
-
-        //Assertion by annotation should also pass
     }
 
 
@@ -205,7 +210,7 @@ public class ExternalTests {
 
 
     //Test when a player tries to place patch on an already occupied spot, expect exception
-    @Test(expected = GameException.class)
+    @Test
     public void testPlacePatchOverlap() throws GameException {
         //Add buttons to startingPlayer to ensure that they can always buy patches
         startingPlayer.addButtons(100);
@@ -218,7 +223,14 @@ public class ExternalTests {
         //assert patch 1 != patch 2, i.e. availablepatches updates correctly
         assertNotEquals(patch1, patch2);
 
-        game.placePatch(startingPlayer, patch2, 5, 5);
+
+        assertEquals(1, startingPlayer.quiltBoard.patches.size());
+
+        assertThrows(
+                GameException.class,
+                () -> game.placePatch(startingPlayer, patch2, 5, 5));
+
+
 
         //Player still only has 1 patch placed
         assertEquals(1, startingPlayer.quiltBoard.patches.size());
@@ -227,19 +239,20 @@ public class ExternalTests {
 
 
     //Test when someone tries to buy a patch without enough buttons
-    @Test(expected = GameException.class)
-    public void testPlacePatchNotEnoughButtons() throws GameException {
+    @Test
+    public void testPlacePatchNotEnoughButtons() {
         startingPlayer.nrButtons = 0; // Set nrButtons to 0 so the player cant afford the patch
 
         Patch patch1 = game.patchList.getAvailablePatches().get(0);
         assertTrue(patch1.buttonCost > 0);
 
-        game.placePatch(startingPlayer, patch1, 0, 0);
-
+        assertThrows(
+                GameException.class,
+                () -> game.placePatch(startingPlayer, patch1, 5, 5));
         assertEquals(0, startingPlayer.quiltBoard.patches.size());
     }
 
-    @Test(expected = GameException.class)
+    @Test
     public void testBuyPatchGameFinished() throws GameException {
 
         //Initial stuff is same as testFinishGame()
@@ -263,11 +276,13 @@ public class ExternalTests {
 
 
         //Now let the game try to place it, throwing an exception
-        game.placePatch(startingPlayer, patch1, 5 ,5 );
+        assertThrows(
+                GameException.class,
+                () -> game.placePatch(startingPlayer, patch1, 5 ,5 ));
 
         //Patch should not be placed, nor buttons deducted or size increased;
         assertTrue(startingPlayer.quiltBoard.canPlace(patch1, 5, 5));
-        assertEquals(DEFAULT_NR_BUTTONS, startingPlayer.nrButtons);
+        assertEquals(DEFAULT_NR_BUTTONS+51, startingPlayer.nrButtons);
         assertEquals(0, startingPlayer.quiltBoard.patches.size());
 
 

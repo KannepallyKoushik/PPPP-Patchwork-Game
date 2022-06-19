@@ -1,12 +1,9 @@
 package com.patchwork.app.utils;
 
-import com.patchwork.app.adapters.PlayerType;
-import com.patchwork.app.backend.Exceptions.GameException;
-import com.patchwork.app.backend.Patch;
-import com.patchwork.app.backend.PatchFactory;
-import com.patchwork.app.backend.PatchList;
-import com.patchwork.app.backend.PatchListFactory;
-import org.junit.Assert;
+import com.patchwork.app.backend.model.Patch;
+import com.patchwork.app.backend.model.PatchFactory;
+import com.patchwork.app.backend.model.PatchList;
+import com.patchwork.app.backend.model.PatchListFactory;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -72,8 +69,6 @@ public class PatchListTest {
 
         assertThrows(
                 RuntimeException.class,
-                () -> {
-                    pl.removePatch(rm);
-                });
+                () -> pl.removePatch(rm));
     }
 }

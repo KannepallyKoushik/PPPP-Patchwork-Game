@@ -1,8 +1,11 @@
 package com.patchwork.app.backend;
 
-import com.patchwork.app.backend.Exceptions.GameException;
-import com.patchwork.app.testUtils.AbstractGameTest;
-import com.patchwork.app.testUtils.MockGameFactory;
+import com.patchwork.app.backend.exceptions.GameException;
+import com.patchwork.app.backend.model.Game;
+import com.patchwork.app.backend.model.Patch;
+import com.patchwork.app.backend.model.Player;
+import com.patchwork.app.testutils.AbstractGameTest;
+import com.patchwork.app.testutils.MockGameFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -84,9 +87,7 @@ public class GameTest extends AbstractGameTest {
 
         assertThrows(
                 GameException.class,
-                () -> {
-                    game.placePatch(currentPlayer, patch, -1, -1);
-                });
+                () -> game.placePatch(currentPlayer, patch, -1, -1));
         assertEquals(0,currentPlayer.quiltBoard.patches.size());
     }
 
@@ -100,23 +101,19 @@ public class GameTest extends AbstractGameTest {
         assertEquals(1,currentPlayer.quiltBoard.patches.size());
         assertThrows(
                 GameException.class,
-                () -> {
-                    game.placePatch(currentPlayer, patch, 0, 0);
-                });
+                () -> game.placePatch(currentPlayer, patch, 0, 0));
         assertEquals(1,currentPlayer.quiltBoard.patches.size());
     }
 
     @Test
-    public void testPlacePatchNotEnoughButtons() throws GameException {
+    public void testPlacePatchNotEnoughButtons()  {
         Player currentPlayer = game.timeBoard.getCurrentPlayer();
         currentPlayer.nrButtons = 0; // Set nrButtons to 0 so the player cant afford the patch
         Patch patch = game.patchList.getAvailablePatches().get(0);
 
         assertThrows(
                 GameException.class,
-                () -> {
-                    game.placePatch(currentPlayer, patch, 0, 0);
-                });
+                () -> game.placePatch(currentPlayer, patch, 0, 0));
         assertEquals(0,currentPlayer.quiltBoard.patches.size());
     }
 
@@ -129,9 +126,7 @@ public class GameTest extends AbstractGameTest {
 
         assertThrows(
                 GameException.class,
-                () -> {
-                    game.placePatch(player, patch, 0, 0);
-                });
+                () -> game.placePatch(player, patch, 0, 0));
         assertEquals(0,player.quiltBoard.patches.size());
     }
 
@@ -147,7 +142,7 @@ public class GameTest extends AbstractGameTest {
     }
 
     @Test
-    public void testMovePastNextPlayerBehind() throws GameException {
+    public void testMovePastNextPlayerBehind()  {
         Player player = game.players.get(1);
 
         game.timeBoard.movePlayer(player, 1);
@@ -155,9 +150,7 @@ public class GameTest extends AbstractGameTest {
 
         assertThrows(
                 GameException.class,
-                () -> {
-                    game.movePastNextPlayer(player);
-                });
+                () -> game.movePastNextPlayer(player));
         assertEquals(1, game.timeBoard.getPlayerPosition(player));
     }
 
@@ -169,9 +162,7 @@ public class GameTest extends AbstractGameTest {
 
         assertThrows(
                 GameException.class,
-                () -> {
-                    game.movePastNextPlayer(player);
-                });
+                () -> game.movePastNextPlayer(player));
         assertEquals(51, game.timeBoard.getPlayerPosition(player));
     }
 }

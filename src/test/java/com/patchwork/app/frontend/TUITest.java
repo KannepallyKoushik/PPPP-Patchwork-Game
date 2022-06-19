@@ -1,10 +1,10 @@
 package com.patchwork.app.frontend;
 
-import com.patchwork.app.backend.Patch;
-import com.patchwork.app.backend.PatchFactory;
-import com.patchwork.app.backend.QuiltBoard;
-import com.patchwork.app.backend.TimeBoard;
-import com.patchwork.app.testUtils.AbstractGameTest;
+import com.patchwork.app.backend.model.Patch;
+import com.patchwork.app.backend.model.PatchFactory;
+import com.patchwork.app.backend.model.QuiltBoard;
+import com.patchwork.app.backend.model.TimeBoard;
+import com.patchwork.app.testutils.AbstractGameTest;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;

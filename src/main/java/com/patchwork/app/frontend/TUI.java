@@ -1,12 +1,12 @@
 package com.patchwork.app.frontend;
 
-import com.patchwork.app.backend.Game;
-import com.patchwork.app.backend.GameStates.PickMove;
-import com.patchwork.app.backend.GameStates.PickPatch;
-import com.patchwork.app.backend.GameStates.PlacePatch;
-import com.patchwork.app.backend.Patch;
-import com.patchwork.app.backend.QuiltBoard;
-import com.patchwork.app.backend.TimeBoard.SpaceElement;
+import com.patchwork.app.backend.model.Game;
+import com.patchwork.app.backend.controller.GameStates.PickMove;
+import com.patchwork.app.backend.controller.GameStates.PickPatch;
+import com.patchwork.app.backend.controller.GameStates.PlacePatch;
+import com.patchwork.app.backend.model.Patch;
+import com.patchwork.app.backend.model.QuiltBoard;
+import com.patchwork.app.backend.model.TimeBoard.SpaceElement;
 import com.patchwork.app.utils.ConsoleColor;
 
 import java.io.PrintStream;

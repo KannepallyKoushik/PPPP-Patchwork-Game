@@ -1,7 +1,7 @@
 package com.patchwork.app.adapters;
 
-import com.patchwork.app.backend.GameFactory;
-import com.patchwork.app.backend.TimeBoard;
+import com.patchwork.app.backend.model.GameFactory;
+import com.patchwork.app.backend.model.TimeBoard;
 
 public class AdaptedTimeBoard extends TimeBoard {
     public AdaptedTimeBoard(int size) {

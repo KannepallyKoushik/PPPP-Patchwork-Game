@@ -1,8 +1,8 @@
 package com.patchwork.app.adapters;
 
-import com.patchwork.app.backend.Exceptions.GameException;
-import com.patchwork.app.backend.Patch;
-import com.patchwork.app.backend.QuiltBoard;
+import com.patchwork.app.backend.exceptions.GameException;
+import com.patchwork.app.backend.model.Patch;
+import com.patchwork.app.backend.model.QuiltBoard;
 
 public class PatchBoard extends QuiltBoard {
 

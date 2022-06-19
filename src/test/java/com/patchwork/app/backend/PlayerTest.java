@@ -1,6 +1,9 @@
 package com.patchwork.app.backend;
 
-import com.patchwork.app.backend.Exceptions.GameException;
+import com.patchwork.app.backend.exceptions.GameException;
+import com.patchwork.app.backend.model.Patch;
+import com.patchwork.app.backend.model.PatchFactory;
+import com.patchwork.app.backend.model.Player;
 import org.junit.Assert;
 import org.junit.Test;
 

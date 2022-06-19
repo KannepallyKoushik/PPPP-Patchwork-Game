@@ -1,12 +1,15 @@
 package com.patchwork.app.adapters;
 
-import com.patchwork.app.backend.*;
+import com.patchwork.app.backend.model.Game;
+import com.patchwork.app.backend.model.GameFactory;
+import com.patchwork.app.backend.model.Player;
+import com.patchwork.app.backend.model.TimeBoard;
 
 import java.util.ArrayList;
 
 public class AdaptedGame {
     private int playerID = 0;
-    private GameFactory gameFactory = new GameFactory();
+    private final GameFactory gameFactory = new GameFactory();
 
     public Game game = gameFactory.createGame();
     public TimeBoard timeBoard = this.game.timeBoard;
