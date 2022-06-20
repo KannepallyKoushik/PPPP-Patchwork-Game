@@ -1,8 +1,13 @@
 package com.patchwork.app.backend;
 
-import com.patchwork.app.backend.Exceptions.GameException;
+import com.patchwork.app.backend.exceptions.GameException;
+import com.patchwork.app.backend.model.Patch;
+import com.patchwork.app.backend.model.PatchFactory;
+import com.patchwork.app.backend.model.QuiltBoard;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 public class QuiltBoardTest {
 
@@ -74,15 +79,11 @@ public class QuiltBoardTest {
         Assert.assertTrue(quiltBoard.hasSevenBySeven());
 
         //Remove row 6, now we have a 6x7 so == false
-        for (int i = 0; i < quiltBoard.spaces[6].length; i++) {
-            quiltBoard.spaces[6][i] = false;
-        }
+        Arrays.fill(quiltBoard.spaces[6], false);
         Assert.assertFalse(quiltBoard.hasSevenBySeven());
 
         //Add it back in, should be back to == true
-        for (int i = 0; i < quiltBoard.spaces[6].length; i++) {
-            quiltBoard.spaces[6][i] = true;
-        }
+        Arrays.fill(quiltBoard.spaces[6], true);
         Assert.assertTrue(quiltBoard.hasSevenBySeven());
 
         //Because we now want to remove column 6 instead, had to ensure that this is solely because of this removed column == false
@@ -118,9 +119,7 @@ public class QuiltBoardTest {
 
         //Now make it a 9x9 full true matrix == true
         for (int i = 0; i < quiltBoard.spaces.length; i++) {
-            for (int j = 0; j < quiltBoard.spaces[i].length; j++) {
-                quiltBoard.spaces[i][j] = true;
-            }
+            Arrays.fill(quiltBoard.spaces[i], true);
         }
         Assert.assertEquals(0, quiltBoard.countEmpty());
     }

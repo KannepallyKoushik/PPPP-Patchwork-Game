@@ -1,8 +1,7 @@
 package com.patchwork.app.frontend;
 
-import com.patchwork.app.backend.*;
-import com.patchwork.app.backend.GameStates.*;
-import com.patchwork.app.backend.TimeBoard.SpaceElement;
+import com.patchwork.app.backend.controller.GameStates.*;
+import com.patchwork.app.backend.model.*;
 
 import java.util.List;
 
@@ -287,7 +286,7 @@ public class TUI {
     }
 
     private void drawTimeBoardSpace(int spaceIndex, int row) {
-        List<SpaceElement> space = game.timeBoard.spaces.get(spaceIndex);
+        List<TimeBoard.SpaceElement> space = game.timeBoard.spaces.get(spaceIndex);
 
         write("|");
 
@@ -312,7 +311,7 @@ public class TUI {
         write(String.format("%5s", patchRow));
     }
 
-    private String getSpaceElementName(SpaceElement spaceElement) {
+    private String getSpaceElementName(TimeBoard.SpaceElement spaceElement) {
         String name = spaceElement.player == null ? spaceElement.type.name() : spaceElement.player.name;
 
         if (name.length() > 5) {

@@ -1,8 +1,8 @@
 package com.patchwork.app;
 
-import com.patchwork.app.backend.GameController;
-import com.patchwork.app.backend.GameControllerFactory;
-import com.patchwork.app.backend.GameFactory;
+import com.patchwork.app.backend.controller.GameController.GameController;
+import com.patchwork.app.backend.controller.GameController.GameControllerFactory;
+import com.patchwork.app.backend.model.GameFactory;
 import com.patchwork.app.frontend.GUI;
 import javafx.application.Application;
 import javafx.stage.Stage;

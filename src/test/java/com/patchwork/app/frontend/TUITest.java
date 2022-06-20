@@ -1,10 +1,10 @@
 package com.patchwork.app.frontend;
 
-import com.patchwork.app.backend.Patch;
-import com.patchwork.app.backend.PatchFactory;
-import com.patchwork.app.backend.QuiltBoard;
-import com.patchwork.app.backend.TimeBoard;
-import com.patchwork.app.testUtils.AbstractGameTest;
+import com.patchwork.app.backend.model.Patch;
+import com.patchwork.app.backend.model.PatchFactory;
+import com.patchwork.app.backend.model.QuiltBoard;
+import com.patchwork.app.backend.model.TimeBoard;
+import com.patchwork.app.testutils.AbstractGameTest;
 import org.junit.Test;
 
 import java.util.List;
@@ -57,7 +57,6 @@ public class TUITest extends AbstractGameTest {
             }
         }
 
-
         tui.drawTimeBoard();
 
         validate_timeboard_patches(numPatches);
@@ -78,7 +77,14 @@ public class TUITest extends AbstractGameTest {
     }
 
     private void validate_quiltboard_spaces() {
-        Pattern pattern = Pattern.compile(String.valueOf(TUI.SPACE_CHAR));
+        Pattern pattern = Pattern.compile(
+                String.format(
+                        "[%c%c%c]",
+                        TUI.QUILTBOARD_PATCH_SPACE_CHAR,
+                        TUI.QUILTBOARD_EMPTY_SPACE_CHAR,
+                        TUI.QUILTBOARD_HIGHLIGHTED_PATCH_SPACE_CHAR
+                )
+        );
         Matcher matcher = pattern.matcher(tuiOutput.toString());
         int count = 0;
         while (matcher.find()) count++;

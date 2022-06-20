@@ -1,5 +1,7 @@
 package com.patchwork.app.backend;
 
+import com.patchwork.app.backend.model.Player;
+import com.patchwork.app.backend.model.TimeBoard;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,7 +14,7 @@ public class TimeboardTest {
     public void constructTimeboardTest() {
         // Assert a Timeboard with  52 time spaces got created when called constructor
 
-        List<Player> players = new ArrayList<>();;
+        List<Player> players = new ArrayList<>();
         players.add(new Player("Player 1"));
         players.add(new Player("Player 2"));
 
@@ -22,7 +24,7 @@ public class TimeboardTest {
 
     @Test
     public void testInitialPositionsOfPlayers(){
-        List<Player> players = new ArrayList<>();;
+        List<Player> players = new ArrayList<>();
         players.add(new Player("Player 1"));
         players.add(new Player("Player 2"));
         TimeBoard timeBoard = new TimeBoard(players);
@@ -34,7 +36,7 @@ public class TimeboardTest {
 
     @Test
     public void checkPositionOfPlayerAfterMoved(){
-        List<Player> players = new ArrayList<>();;
+        List<Player> players = new ArrayList<>();
         players.add(new Player("Player 1"));
         players.add(new Player("Player 2"));
         TimeBoard timeBoard = new TimeBoard(players);
@@ -44,13 +46,13 @@ public class TimeboardTest {
         Assert.assertEquals(5,timeBoard.getPlayerPosition(players.get(1)));
 
         // Since Player-1 is not moved check if he is in 0th space and not 5th space as Player-2
-        Assert.assertFalse( timeBoard.getPlayerPosition(players.get(0)) == 5 );
+        Assert.assertNotEquals( 5, timeBoard.getPlayerPosition(players.get(0)) );
         Assert.assertEquals(0,timeBoard.getPlayerPosition(players.get(0)));
     }
 
     @Test
     public void testGetCurrentPlayer(){
-        List<Player> players = new ArrayList<>();;
+        List<Player> players = new ArrayList<>();
         players.add(new Player("Player 1"));
         players.add(new Player("Player 2"));
         TimeBoard timeBoard = new TimeBoard(players);
@@ -66,6 +68,6 @@ public class TimeboardTest {
         // Move the Player-2 to the same position of Player-1 making it sit over the top and Assert if the current player is Player-2
         timeBoard.movePlayer(players.get(1), 10);
         Assert.assertEquals(players.get(1), timeBoard.getCurrentPlayer());
-        Assert.assertFalse(players.get(0) == timeBoard.getCurrentPlayer());
+        Assert.assertNotSame(players.get(0), timeBoard.getCurrentPlayer());
     }
 }

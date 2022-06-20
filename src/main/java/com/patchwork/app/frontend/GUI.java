@@ -1,7 +1,7 @@
 package com.patchwork.app.frontend;
 
-import com.patchwork.app.backend.Inputs.GameInput;
-import com.patchwork.app.backend.Move;
+import com.patchwork.app.backend.controller.GameStates.Move;
+import com.patchwork.app.backend.controller.Inputs.GameInput;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
@@ -9,8 +9,6 @@ import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
 
 public class GUI extends GameInput implements IWritable {
 
@@ -37,7 +35,7 @@ public class GUI extends GameInput implements IWritable {
         scene = new Scene(textArea, 800, 800);
 
         scene.setOnKeyPressed(e -> {
-            if(e.getCode() != null) {
+            if (e.getCode() != null) {
                 handleKeyCode(e.getCode());
             }
         });
@@ -77,7 +75,7 @@ public class GUI extends GameInput implements IWritable {
 
     private Map<KeyCode, Move> makeKeyCodeMap() {
         return Map.of(
-               KeyCode.A, Move.MOVE_LEFT,
+                KeyCode.A, Move.MOVE_LEFT,
                 KeyCode.D, Move.MOVE_RIGHT,
                 KeyCode.W, Move.MOVE_UP,
                 KeyCode.S, Move.MOVE_DOWN,

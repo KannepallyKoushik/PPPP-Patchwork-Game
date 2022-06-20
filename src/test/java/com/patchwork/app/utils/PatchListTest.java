@@ -1,21 +1,21 @@
 package com.patchwork.app.utils;
 
-import com.patchwork.app.backend.Patch;
-import com.patchwork.app.backend.PatchFactory;
-import com.patchwork.app.backend.PatchList;
-import com.patchwork.app.backend.PatchListFactory;
+import com.patchwork.app.backend.model.Patch;
+import com.patchwork.app.backend.model.PatchFactory;
+import com.patchwork.app.backend.model.PatchList;
+import com.patchwork.app.backend.model.PatchListFactory;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 public class PatchListTest {
 
     private PatchList pl;
+
 
     @Before
     public void setUp() {
@@ -59,12 +59,16 @@ public class PatchListTest {
         assertEquals(0, pl.getAvailablePatches().size());
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void removeUnavailablePatch() {
         Patch rm = pl.getAvailablePatches().get(0);
-        pl.removePatch(pl.getAvailablePatches().get(1));
+        Patch rm2 = pl.getAvailablePatches().get(1);
+        pl.removePatch(rm2);
+        // Patch 0 (assigned to rm) should not be selectable due to change in index
+        // ensure that runtime error is raised when removing it
 
-        // Patch 0 (assigned to rm) should not be selectable, ensure that runtime error is raised when removing it
-        pl.removePatch(rm);
+        assertThrows(
+                RuntimeException.class,
+                () -> pl.removePatch(rm));
     }
 }

@@ -1,7 +1,7 @@
 package com.patchwork.app.adapters;
 
 
-import com.patchwork.app.backend.Patch;
+import com.patchwork.app.backend.model.Patch;
 
 import java.util.Collections;
 

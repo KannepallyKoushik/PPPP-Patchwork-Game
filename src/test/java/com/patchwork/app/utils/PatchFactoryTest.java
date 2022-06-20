@@ -1,7 +1,7 @@
 package com.patchwork.app.utils;
 
-import com.patchwork.app.backend.Patch;
-import com.patchwork.app.backend.PatchFactory;
+import com.patchwork.app.backend.model.Patch;
+import com.patchwork.app.backend.model.PatchFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
