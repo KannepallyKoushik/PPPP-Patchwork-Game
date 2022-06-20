@@ -76,7 +76,7 @@ public class Game {
      */
     private void finalizeGame() {
         Map<Player, Integer> playerScores = new HashMap<>();
-        int highestScore = -1;
+        int highestScore = Integer.MIN_VALUE;
         Player highestScorePlayer = null;
 
         for (Player player : players) {

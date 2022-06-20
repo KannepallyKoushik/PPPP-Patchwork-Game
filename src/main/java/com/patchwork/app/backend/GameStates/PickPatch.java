@@ -22,13 +22,16 @@ public class PickPatch extends GameState {
     }
 
     @Override
-    public void draw(TUI tui) {
-        tui.drawPickPatchState(this);
-    }
+    public String getInstructionsString() {
+        String pattern = "You are currently choosing the %s patch.";
 
-    @Override
-    public void drawInstructions(TUI tui) {
-        tui.drawMessage("Please choose your patch by typing LEFT or RIGHT or CONFIRM");
-        tui.drawMessage("You are currently choosing the " + options.indexOf(selectedPatch) + " patch.");
+        String word = switch (options.indexOf(selectedPatch)) {
+            case 0 -> "first";
+            case 1 -> "second";
+            case 2 -> "third";
+            default -> String.valueOf(options.indexOf(selectedPatch));
+        };
+
+        return String.format(pattern, word);
     }
 }

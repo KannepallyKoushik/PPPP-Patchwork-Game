@@ -73,6 +73,7 @@ public class GameController implements GameInputObserver, Runnable {
         } catch (GameException e) {
             e.printStackTrace();
         }
+        gameInput.unsubscribe(this);
     }
 
     /**
@@ -90,31 +91,39 @@ public class GameController implements GameInputObserver, Runnable {
         gameState = new PickMove(currentPlayer(), game.patchList.getAvailablePatches());
 
         while (!isFinished()) {
-            redrawGameState();
+            redrawGame();
             Move move = getMove();
 
             if (!isFinished()) {
                 handleMove(move);
             }
 
-            if (isFinished()) {
-                finalizeGame();
-            }
-
             incrementGameCycleCounter();
         }
+
+        finalizeGame();
+        redrawGame();
+        incrementGameCycleCounter();
     }
 
-    private void redrawGameState() {
-        gameState.draw(textUI);
-        gameState.drawInstructions(textUI);
+    private void redrawGame() {
+        redrawGameState();
 
-        if (messages.size() != 0) {
+        if (!isFinished() && messages.size() != 0) {
             textUI.drawMessage("");  // Add single line of spacing
             for (String s : messages) {
                 textUI.drawMessage(s);
             }
             messages = new ArrayList<>();
+        }
+    }
+
+    private void redrawGameState() {
+        switch(gameState.type) {
+            case PICK_MOVE -> textUI.drawPickMoveState((PickMove) gameState);
+            case PICK_PATCH -> textUI.drawPickPatchState((PickPatch) gameState);
+            case PLACE_PATCH -> textUI.drawPlacePatchState((PlacePatch) gameState);
+            case FINISHED -> textUI.drawFinishedState((Finished) gameState);
         }
     }
 
@@ -257,7 +266,7 @@ public class GameController implements GameInputObserver, Runnable {
     private void finalizeMove(Player player, MoveResult moveResult) {
         if (moveResult != null) {
             specialPatchesCounter += moveResult.getNrSpecialPatches();
-            drawMoveResult(moveResult);
+            drawMoveResult(player, moveResult);
 
             if (specialPatchesCounter != 0) {
                 gameState = new PlacePatch(player, patchFactory.createSpecialPatch(), 0, 0);
@@ -308,10 +317,15 @@ public class GameController implements GameInputObserver, Runnable {
         textUI.drawMessage("Invalid input!");
     }
 
-    private void drawMoveResult(MoveResult moveResult) {
+    private void drawMoveResult(Player player, MoveResult moveResult) {
+        if (moveResult.getNrButtons() == 0 && moveResult.getNrSpecialPatches() == 0) {
+            return;
+        }
+
         drawMessage(
                 String.format(
-                        "You obtained %d buttons and %d special patches",
+                        "%s obtained %d buttons and %d special patches",
+                        player.name,
                         moveResult.getNrButtons(),
                         moveResult.getNrSpecialPatches()
                 )

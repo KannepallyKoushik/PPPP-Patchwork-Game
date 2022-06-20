@@ -28,6 +28,10 @@ public abstract class GameInput {
         observers.add(observer);
     }
 
+    public void unsubscribe(GameInputObserver observer) {
+        observers.remove(observer);
+    }
+
     public abstract String getHelpText();
 
 }

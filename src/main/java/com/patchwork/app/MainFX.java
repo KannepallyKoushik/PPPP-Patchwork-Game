@@ -7,36 +7,90 @@ import com.patchwork.app.frontend.GUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+import java.util.concurrent.CountDownLatch;
+
 public class MainFX extends Application {
 
-    private Thread gameControllerThread;
-    private GameController gameController;
+    private GUI gui;
+    private Stage stage;
+    private Thread gameWorkerThread;
+    private boolean shouldExit = false;
+
+    public static void main(String[] args) {
+        launch();
+    }
 
     @Override
     public void start(Stage stage) {
-        GUI gui = new GUI(stage);
-
-        GameFactory gameFactory = new GameFactory();
-        GameControllerFactory gameControllerFactory = new GameControllerFactory(gui, gameFactory);
-
-        gameController = gameControllerFactory.createGameController();
-
-        gameControllerThread = new Thread(gameController);
-        gameControllerThread.start();
+        this.stage = stage;
+        gui = new GUI(stage);
+        gameWorkerThread = new Thread(this::gameWorker);
+        gameWorkerThread.start();
     }
 
     @Override
     public void stop() throws Exception {
+        shouldExit = true;
+        joinThread(gameWorkerThread);
+
         super.stop();
-        try {
+    }
+
+    private void gameWorker() {
+        while (true) {
+            GameController gameController = makeGameController();
+            Thread gameControllerThread = new Thread(gameController);
+            gameControllerThread.start();
+
+            waitGameFinished(gameControllerThread);
             gameController.stop();
-            gameControllerThread.join();
-        } catch (Exception e) {
-            e.printStackTrace();
+            joinThread(gameControllerThread);
+
+            if (shouldExit) {
+                return;
+            }
+
+            waitUntilEnterPressed();
         }
     }
 
-    public static void main(String[] args) {
-        launch();
+    private void waitUntilEnterPressed() {
+        CountDownLatch l = new CountDownLatch(1);
+        stage.getScene().setOnKeyPressed(e -> {
+            l.countDown();
+        });
+
+        try {
+            l.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            shouldExit = true;
+        }
+    }
+
+    private GameController makeGameController() {
+        GameFactory gameFactory = new GameFactory();
+        GameControllerFactory gameControllerFactory = new GameControllerFactory(gui, gameFactory);
+        return gameControllerFactory.createGameController();
+    }
+
+    private void waitGameFinished(Thread gameControllerThread) {
+        try {
+            while (gameControllerThread.isAlive() && !shouldExit) {
+                Thread.sleep(500);
+            }
+        } catch (InterruptedException ignored) {
+        }
+    }
+
+    private void joinThread(Thread t) {
+        if (!t.isAlive()) {
+            return;
+        }
+
+        try {
+            t.join();
+        } catch (InterruptedException ignored) {
+        }
     }
 }

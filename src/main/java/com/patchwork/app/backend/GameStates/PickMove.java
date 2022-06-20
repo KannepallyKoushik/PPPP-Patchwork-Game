@@ -39,21 +39,7 @@ public class PickMove extends GameState {
     }
 
     @Override
-    public void draw(TUI tui) {
-        tui.drawPickMoveState(this);
-    }
-
-    @Override
-    public void drawInstructions(TUI tui) {
-        String line = "You are currently selecting: ";
-
-        if (selectedOption == MoveOption.PLACE_PATCH) {
-            line += "Buy a patch";
-        } else {
-            line += "Move past next player";
-        }
-
-        tui.drawMessage(line);
-        tui.drawMessage("Change your selection by typing LEFT or RIGHT, or confirm with CONFIRM");
+    public String getInstructionsString() {
+        return "Use arrow keys and Enter to select your move.";
     }
 }

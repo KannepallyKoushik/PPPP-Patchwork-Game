@@ -1,7 +1,6 @@
 package com.patchwork.app.backend;
 
 import com.patchwork.app.backend.Inputs.GameInput;
-import com.patchwork.app.backend.Inputs.MockGameInput;
 import com.patchwork.app.frontend.GUI;
 import com.patchwork.app.frontend.TUI;
 

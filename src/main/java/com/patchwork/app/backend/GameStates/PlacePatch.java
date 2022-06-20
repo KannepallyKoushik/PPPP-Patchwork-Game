@@ -22,12 +22,7 @@ public class PlacePatch extends GameState {
     }
 
     @Override
-    public void draw(TUI tui) {
-        tui.drawPlacePatchState(this);
-    }
-
-    @Override
-    public void drawInstructions(TUI tui) {
-        tui.drawMessage("Please place your patch, with either LEFT RIGHT UP DOWN or CONFIRM");
+    public String getInstructionsString() {
+        return "Please place your patch, with either LEFT RIGHT UP DOWN or CONFIRM";
     }
 }
