@@ -7,12 +7,11 @@ import org.junit.After;
 import org.junit.Before;
 
 import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.List;
 
 public class AbstractGameTest {
 
-    private PrintStream originalSysOut;
+    protected boolean autostart_game_controller = true;
 
     protected Game game;
     protected GameController gameController;
@@ -39,27 +38,25 @@ public class AbstractGameTest {
         nextPlayer = game.getOpponent(startingPlayer);
 
         gameControllerThread = new Thread(gameController);
-        gameControllerThread.start();
+
+        if(autostart_game_controller) {
+            gameControllerThread.start();
+        }
     }
 
     @Before
     public void setUp() {
         // Create game
         GameFactory gameFactory = new GameFactory();
-        GameControllerFactory gameControllerFactory = new MockGameControllerFactory(gameFactory);
+        MockGameControllerFactory gameControllerFactory = new MockGameControllerFactory(gameFactory);
         createAndSetGame(gameControllerFactory);
 
-        // Disable TUI prints
-        originalSysOut = System.out;
-        tuiOutput = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(tuiOutput));
+        // Override TUI output
+        tuiOutput = gameControllerFactory.getTuiOutputStream();
     }
 
     @After
     public void tearDown() {
-        // Set system out back to default
-        System.setOut(originalSysOut);
-
         gameController.stop();
         gameControllerThread.stop();
     }

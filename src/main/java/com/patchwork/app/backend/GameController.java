@@ -4,10 +4,9 @@ import com.patchwork.app.MoveResult;
 import com.patchwork.app.backend.Exceptions.GameException;
 import com.patchwork.app.backend.GameStates.*;
 import com.patchwork.app.backend.Inputs.GameInput;
-import com.patchwork.app.backend.Inputs.KeyInput;
-import com.patchwork.app.backend.Inputs.ScannerInput;
 import com.patchwork.app.frontend.TUI;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameController implements GameInputObserver, Runnable {
@@ -18,24 +17,23 @@ public class GameController implements GameInputObserver, Runnable {
     public Game game;
     public GameInput gameInput;
 
-    public boolean isFinished = false;
+    private boolean isExited = false;
 
     public GameState gameState;
     private Move gameInputMove = null;
     private int gameCycleCounter = 0;
     private int specialPatchesCounter = 0;
     private final PatchFactory patchFactory;
-
-    private final Thread gameInputThread;
+    private List<String> messages;
 
     public GameController(Game game, TUI textUI, GameInput gameInput) {
         this.game = game;
         this.textUI = textUI;
         this.gameInput = gameInput;
         this.gameInput.subscribe(this);
-        this.gameInputThread = new Thread(gameInput);
         this.gameState = null;
         this.patchFactory = new PatchFactory();
+        this.messages = List.of("Press 'h' for help.");
     }
 
     private Player currentPlayer() {
@@ -55,7 +53,7 @@ public class GameController implements GameInputObserver, Runnable {
     }
 
     public void waitUntilGameCycle(int cycle) {
-        if (isFinished) {
+        if (isFinished()) {
             return;
         }
 
@@ -70,13 +68,10 @@ public class GameController implements GameInputObserver, Runnable {
 
     @Override
     public void run() {
-        gameInputThread.start();
         try {
             mainloop();
         } catch (GameException e) {
             e.printStackTrace();
-        } finally {
-            gameInputThread.stop();
         }
     }
 
@@ -84,25 +79,42 @@ public class GameController implements GameInputObserver, Runnable {
      * Causes the game loop to exit on the next cycle.
      */
     public void stop() {
-        isFinished = true;
+        isExited = true;
+    }
+
+    public boolean isFinished() {
+        return game.isFinished() || isExited;
     }
 
     private void mainloop() throws GameException {
         gameState = new PickMove(currentPlayer(), game.patchList.getAvailablePatches());
 
-        while (!isFinished) {
-            gameState.draw(textUI);
-            gameState.drawInstructions(textUI);
-
+        while (!isFinished()) {
+            redrawGameState();
             Move move = getMove();
-            handleMove(move);
-            isFinished = isFinished || game.isFinished();
 
-            if (isFinished) {
+            if (!isFinished()) {
+                handleMove(move);
+            }
+
+            if (isFinished()) {
                 finalizeGame();
             }
 
             incrementGameCycleCounter();
+        }
+    }
+
+    private void redrawGameState() {
+        gameState.draw(textUI);
+        gameState.drawInstructions(textUI);
+
+        if (messages.size() != 0) {
+            textUI.drawMessage("");  // Add single line of spacing
+            for (String s : messages) {
+                textUI.drawMessage(s);
+            }
+            messages = new ArrayList<>();
         }
     }
 
@@ -116,23 +128,14 @@ public class GameController implements GameInputObserver, Runnable {
 
     private void handleMove(Move move) throws GameException {
         if (move.equals(Move.HELP)) {
-            if (gameInput instanceof ScannerInput){
-                System.out.println(((ScannerInput) gameInput).getScannerCommands().getInputs());
-            } else if (gameInput instanceof KeyInput){
-                System.out.println(((KeyInput) gameInput).getKeyCommands().getMoves());
-            }
-        } else {
-            switch (gameState.type) {
-                case PICK_MOVE:
-                    handlePickMove((PickMove) gameState, move);
-                    break;
-                case PICK_PATCH:
-                    handlePickPatch((PickPatch) gameState, move);
-                    break;
-                case PLACE_PATCH:
-                    handlePlacePatch((PlacePatch) gameState, move);
-                    break;
-            }
+            drawMessage(gameInput.getHelpText());
+            return;
+        }
+
+        switch (gameState.type) {
+            case PICK_MOVE -> handlePickMove((PickMove) gameState, move);
+            case PICK_PATCH -> handlePickPatch((PickPatch) gameState, move);
+            case PLACE_PATCH -> handlePlacePatch((PlacePatch) gameState, move);
         }
     }
 
@@ -284,13 +287,10 @@ public class GameController implements GameInputObserver, Runnable {
 
     private Move getMove() {
         try {
-            while (gameInputMove == null) {
+            while (gameInputMove == null && !isFinished()) {
                 Thread.sleep(tickSpeed);
             }
         } catch (InterruptedException e) {
-            if (isFinished) {
-                return null;
-            }
             throw new RuntimeException("Failed to obtain next move");
         }
 
@@ -301,7 +301,7 @@ public class GameController implements GameInputObserver, Runnable {
     }
 
     private void drawMessage(String message) {
-        textUI.drawMessage(message);
+        messages.add(message);
     }
 
     private void drawInvalidInput() {

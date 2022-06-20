@@ -10,7 +10,7 @@ import com.patchwork.app.backend.Move;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class GameInput implements Runnable {
+public abstract class GameInput {
 
     public List<GameInputObserver> observers;
 
@@ -28,6 +28,6 @@ public abstract class GameInput implements Runnable {
         observers.add(observer);
     }
 
-
+    public abstract String getHelpText();
 
 }

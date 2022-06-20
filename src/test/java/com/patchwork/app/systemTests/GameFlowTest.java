@@ -59,9 +59,8 @@ public class GameFlowTest extends AbstractGameTest {
                 Move.CONFIRM
         );
 
-        if (!game.isFinished()) {
-            throw new RuntimeException("Created game is not finished");
-        }
+        Assert.assertTrue(game.isFinished());
+        Assert.assertTrue(gameController.isFinished());
     }
 
     private void executeMoves(Move... moves) {
@@ -298,7 +297,6 @@ public class GameFlowTest extends AbstractGameTest {
 
     @Test
     public void testBuyPatchGameFinished() throws GameException, InterruptedException {
-
         makeFinishedGame();
         assertEquals(gameController.gameState.type, GameStateType.FINISHED);
 

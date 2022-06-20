@@ -1,18 +1,21 @@
 package com.patchwork.app.backend;
 
 import com.patchwork.app.backend.Inputs.GameInput;
-import com.patchwork.app.backend.Inputs.ScannerInput;
+import com.patchwork.app.backend.Inputs.MockGameInput;
+import com.patchwork.app.frontend.GUI;
 import com.patchwork.app.frontend.TUI;
 
 public class GameControllerFactory {
 
     private final GameFactory gameFactory;
+    private final GUI gui;
     private Game game;
     private TUI tui;
     private GameInput gameInput;
 
-    public GameControllerFactory(GameFactory gameFactory) {
+    public GameControllerFactory(GUI gui, GameFactory gameFactory) {
         this.gameFactory = gameFactory;
+        this.gui = gui;
     }
 
     public GameController createGameController() {
@@ -24,11 +27,11 @@ public class GameControllerFactory {
     }
 
     protected TUI createTUI(Game game) {
-        return new TUI(game);
+        return new TUI(game, gui);
     }
 
     protected GameInput createGameInput() {
-        return new ScannerInput();
+        return gui;
     }
 
     public Game getGame() {
