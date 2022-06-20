@@ -40,6 +40,6 @@ public class PickMove extends GameState {
 
     @Override
     public String getInstructionsString() {
-        return "Use arrow keys and Enter to select your move.";
+        return "Use WASD and Enter to select your move.";
     }
 }

@@ -119,7 +119,7 @@ public class GameController implements GameInputObserver, Runnable {
     }
 
     private void redrawGameState() {
-        switch(gameState.type) {
+        switch (gameState.type) {
             case PICK_MOVE -> textUI.drawPickMoveState((PickMove) gameState);
             case PICK_PATCH -> textUI.drawPickPatchState((PickPatch) gameState);
             case PLACE_PATCH -> textUI.drawPlacePatchState((PlacePatch) gameState);
@@ -216,18 +216,14 @@ public class GameController implements GameInputObserver, Runnable {
         int y = gameState.y;
 
         switch (move) {
-            case MOVE_LEFT:
-                x = Math.max(0, x - 1);
-                break;
-            case MOVE_RIGHT:
-                x = Math.min(QuiltBoard.DIM_X - 1, x + 1);
-                break;
-            case MOVE_UP:
-                y = Math.max(0, y - 1);
-                break;
-            case MOVE_DOWN:
-                y = Math.min(QuiltBoard.DIM_Y - 1, y + 1);
+            case MOVE_LEFT -> x--;
+            case MOVE_RIGHT -> x++;
+            case MOVE_UP -> y--;
+            case MOVE_DOWN -> y++;
         }
+
+        x = QuiltBoard.fixPatchX(x, gameState.patch);
+        y = QuiltBoard.fixPatchY(y, gameState.patch);
 
         this.gameState = new PlacePatch(gameState.player, gameState.patch, x, y);
     }
@@ -244,7 +240,10 @@ public class GameController implements GameInputObserver, Runnable {
                 break;
         }
 
-        this.gameState = new PlacePatch(gameState.player, patch, gameState.x, gameState.y);
+        int x = QuiltBoard.fixPatchX(gameState.x, patch);
+        int y = QuiltBoard.fixPatchY(gameState.y, patch);
+
+        this.gameState = new PlacePatch(gameState.player, patch, x, y);
     }
 
     private void handlePlacePatchMirrorPatch(PlacePatch gameState, Move move) {

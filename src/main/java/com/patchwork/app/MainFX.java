@@ -56,7 +56,7 @@ public class MainFX extends Application {
 
     private void waitUntilEnterPressed() {
         CountDownLatch l = new CountDownLatch(1);
-        stage.getScene().setOnKeyPressed(e -> {
+        stage.getScene().setOnKeyReleased(e -> {
             l.countDown();
         });
 

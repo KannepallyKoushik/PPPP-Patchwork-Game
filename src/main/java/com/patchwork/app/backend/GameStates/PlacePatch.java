@@ -23,6 +23,6 @@ public class PlacePatch extends GameState {
 
     @Override
     public String getInstructionsString() {
-        return "Please place your patch, with either LEFT RIGHT UP DOWN or CONFIRM";
+        return "Place your patch using WASD to move it, Q and E to rotate it and Enter to place it.";
     }
 }

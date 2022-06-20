@@ -36,7 +36,7 @@ public class GUI extends GameInput implements IWritable {
     private void makeScene() {
         scene = new Scene(textArea, 800, 800);
 
-        scene.setOnKeyReleased(e -> {
+        scene.setOnKeyPressed(e -> {
             if(e.getCode() != null) {
                 handleKeyCode(e.getCode());
             }

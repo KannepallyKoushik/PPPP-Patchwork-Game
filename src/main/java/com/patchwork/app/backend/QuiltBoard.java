@@ -169,6 +169,18 @@ public class QuiltBoard {
         return emptySpaces;
     }
 
+    public static int fixPatchX(int x, Patch patch) {
+        x = Math.max(0, x);
+        x = Math.min(QuiltBoard.DIM_X - patch.getWidth(), x);
+        return x;
+    }
+
+    public static int fixPatchY(int y, Patch patch) {
+        y = Math.max(0, y);
+        y = Math.min(QuiltBoard.DIM_Y - patch.getHeight(), y);
+        return y;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

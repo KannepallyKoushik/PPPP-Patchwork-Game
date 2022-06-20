@@ -87,6 +87,15 @@ public class TUI {
     public void drawFinishedState(Finished gameState) {
         clear();
 
+        if (gameState.gameResult == null) {
+            write("\n".repeat(15));
+            writeln("Game was exited early.");
+        } else {
+            drawGameResult(gameState);
+        }
+    }
+
+    public void drawGameResult(Finished gameState) {
         write("\n".repeat(10));
         writeln(String.format("Player %s wins!", gameState.gameResult.winner.name));
 

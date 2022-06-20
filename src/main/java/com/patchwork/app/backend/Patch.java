@@ -40,6 +40,14 @@ public class Patch {
         return new Patch(gm.mirrorSide(spaces), buttonCost, timeTokenCost, buttonScore);
     }
 
+    public int getHeight() {
+        return spaces.size();
+    }
+
+    public int getWidth() {
+        return spaces.get(0).size();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

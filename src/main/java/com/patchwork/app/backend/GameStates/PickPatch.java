@@ -23,7 +23,7 @@ public class PickPatch extends GameState {
 
     @Override
     public String getInstructionsString() {
-        String pattern = "You are currently choosing the %s patch.";
+        String pattern = "Use A and D to pick a patch and use Enter to confirm your selection.";
 
         String word = switch (options.indexOf(selectedPatch)) {
             case 0 -> "first";
