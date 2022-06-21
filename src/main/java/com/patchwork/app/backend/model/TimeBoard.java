@@ -111,7 +111,10 @@ public class TimeBoard {
 
         clearSpaceWherePlayerIsIn(player, currentPlayerPosition);
         updateNewPositionofPlayer(player, expectedPlayerPosition);
-        return NonPlayerSpaceElements(currentPlayerPosition,expectedPlayerPosition);
+        List<SpaceElement> obtainedSpaceElements = NonPlayerSpaceElements(currentPlayerPosition,expectedPlayerPosition);
+        removeSpecialPatches(currentPlayerPosition, expectedPlayerPosition);
+
+        return obtainedSpaceElements;
     }
 
     public List<SpaceElement> NonPlayerSpaceElements(int currentPlayerPosition, int expectedPlayerPosition){
@@ -146,6 +149,20 @@ public class TimeBoard {
         spaces.set(expectedPlayerPosition, newSpace);
 
         playerPositions.put(player, expectedPlayerPosition);
+    }
+
+    public void removeSpecialPatches(int currentPlayerPosition, int expectedPlayerPosition) {
+        List<SpaceElement> toRemove;
+
+        for (int i = currentPlayerPosition + 1; i <= expectedPlayerPosition; i++) {
+            toRemove = new ArrayList<>();
+            for (SpaceElement se : spaces.get(i)) {
+                if (se.type == SpaceElementType.PATCH) {
+                    toRemove.add(se);
+                }
+            }
+            spaces.get(i).removeAll(toRemove);
+        }
     }
 }
 
