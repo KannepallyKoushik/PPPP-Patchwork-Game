@@ -79,24 +79,24 @@ public class Game {
         int highestScore = Integer.MIN_VALUE;
         Player highestScorePlayer = null;
 
+        result = getWinningPlayerandHisScore(playerScores,highestScore,highestScorePlayer);
+    }
+
+    private GameResult getWinningPlayerandHisScore(Map<Player, Integer> playerScores,int highestScore,Player highestScorePlayer){
         for (Player player : players) {
             // Determine and set score
             int score = getPlayerScore(player);
             playerScores.put(player, score);
-
             // Handle highest score calculation.
             if (score > highestScore) {
                 highestScore = score;
                 highestScorePlayer = player;
-            } else if (score == highestScore) {
+            } else if (score == highestScore && firstFinishedPlayer == player) {
                 // Only override highestScorePlayer if the current player finished earlier
-                if (firstFinishedPlayer == player) {
-                    highestScorePlayer = player;
-                }
+                highestScorePlayer = player;
             }
         }
-
-        result = new GameResult(playerScores, highestScorePlayer);
+        return new GameResult(playerScores, highestScorePlayer);
     }
 
     public boolean isFinished() {
@@ -164,7 +164,7 @@ public class Game {
         return performPlacingPatch(player, patch, x,y);
     }
 
-    public MoveResult performPlacingPatch(Player player, Patch patch,int x, int y) throws GameException {
+    private MoveResult performPlacingPatch(Player player, Patch patch,int x, int y) throws GameException {
         player.payButtons(patch.buttonCost);
         player.quiltBoard.placePatch(patch, x, y);
         patchList.removePatch(patch);
@@ -192,6 +192,17 @@ public class Game {
             throw new GameException("Game is already finished");
         }
 
+        MoveResult result = performMovingthePlayer(player);
+
+        // Finalize the game if all players have reached the end of the time board.
+        if (gameShouldFinish()) {
+            finalizeGame();
+        }
+
+        return result;
+    }
+
+    private MoveResult performMovingthePlayer(Player player) throws GameException{
         int currentPosition = timeBoard.getPlayerPosition(player);
         int newPosition = Math.min(timeBoard.NR_SPACES - 1, timeBoard.getPlayerPosition(getOpponent(player)) + 1);
 
@@ -206,12 +217,6 @@ public class Game {
         if (firstFinishedPlayer == null && newPosition == timeBoard.NR_SPACES - 1) {
             firstFinishedPlayer = player;
         }
-
-        // Finalize the game if all players have reached the end of the time board.
-        if (gameShouldFinish()) {
-            finalizeGame();
-        }
-
         return result;
     }
 }

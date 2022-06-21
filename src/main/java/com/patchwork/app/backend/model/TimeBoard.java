@@ -21,14 +21,12 @@ public class TimeBoard {
         setting_players_and_playerPositions(players);
     }
 
-    public void arrangingTimeBoard( List<Player> players ) {
-        List<Integer> buttonsIndicesList = Arrays.asList(8,15, 23, 27, 32,35,41,49);
-        List<Integer> specialPatchIndicesList = Arrays.asList(20, 29, 37, 43, 48, 51);
-        for (int i = 0; i < NR_SPACES; i++) {
-            if(i == 0){
-                add_both_players_onTimeBoard(players);
-            }
-            else if(buttonsIndicesList.contains(i)){
+    private void arrangingTimeBoard( List<Player> players ) {
+        Set<Integer> buttonsIndicesList = new HashSet<>(Arrays.asList(8,15, 23, 27, 32,35,41,49));
+        Set<Integer> specialPatchIndicesList = new HashSet<>(Arrays.asList(20, 29, 37, 43, 48, 51));
+        add_both_players_onTimeBoard(players);
+        for (int i = 1; i < NR_SPACES; i++) {
+            if(buttonsIndicesList.contains(i)){
                 add_button_to_TimeBoard();
             }
             else if(specialPatchIndicesList.contains(i)){
@@ -40,26 +38,26 @@ public class TimeBoard {
         }
     }
 
-    public void setting_players_and_playerPositions(List<Player> players){
+    private void setting_players_and_playerPositions(List<Player> players){
         this.players = players;
         playerPositions.put(players.get(0), 0);
         playerPositions.put(players.get(1), 0);
     }
 
-    public void add_both_players_onTimeBoard(List<Player> players){
+    private void add_both_players_onTimeBoard(List<Player> players){
         ArrayList<SpaceElement> firstSpace = new ArrayList<>();
         firstSpace.add(new SpaceElement(SpaceElementType.PLAYER, players.get(0)));
         firstSpace.add(new SpaceElement(SpaceElementType.PLAYER,players.get(1)));
         this.spaces.add(firstSpace);
     }
 
-    public void add_button_to_TimeBoard(){
+    private void add_button_to_TimeBoard(){
         ArrayList<SpaceElement> space = new ArrayList<>();
         space.add(new SpaceElement(SpaceElementType.BUTTON, null));
         this.spaces.add(space);
     }
 
-    public void add_special_patch_to_TimeBoard(){
+    private void add_special_patch_to_TimeBoard(){
         ArrayList<SpaceElement> space = new ArrayList<>();
         space.add(new SpaceElement(SpaceElementType.PATCH, null));
         this.spaces.add(space);
@@ -127,7 +125,7 @@ public class TimeBoard {
         return obtainedSpaceElements;
     }
 
-    public void clearSpaceWherePlayerIsIn(Player player, int currentPlayerPosition){
+    private void clearSpaceWherePlayerIsIn(Player player, int currentPlayerPosition){
         //  Clearing the SpaceElement where the Player is from spaces list
         List<SpaceElement> space = spaces.get(currentPlayerPosition);
         List<SpaceElement> toRemove = new ArrayList<>();
@@ -139,7 +137,7 @@ public class TimeBoard {
         space.removeAll(toRemove);
     }
 
-    public void updateNewPositionofPlayer(Player player, int expectedPlayerPosition){
+    private void updateNewPositionofPlayer(Player player, int expectedPlayerPosition){
         //  Updating new position of player in spaces list
         List<SpaceElement> newSpace = spaces.get(expectedPlayerPosition);
         newSpace.add(new SpaceElement(SpaceElementType.PLAYER, player));
