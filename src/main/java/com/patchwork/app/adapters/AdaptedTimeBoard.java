@@ -5,7 +5,7 @@ import com.patchwork.app.backend.model.TimeBoard;
 
 public class AdaptedTimeBoard extends TimeBoard {
     public AdaptedTimeBoard(int size) {
-        super(GameFactory.createPlayers(), size);
+        super(new GameFactory().createPlayers(), size);
     }
 
     public void advanceTimeToken(TimeToken t1, TimeToken t2) {
