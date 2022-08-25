@@ -3,11 +3,8 @@ package com.patchwork.app.backend.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameFactory {
+public class GameFactory extends AbstractGameFactory {
 
-    private List<Player> players;
-    private TimeBoard timeBoard;
-    private PatchList patchList;
     private PatchListFactory patchListFactory = new PatchListFactory();
 
     public Game createGame() {
@@ -18,31 +15,22 @@ public class GameFactory {
         return new Game(players, timeBoard, patchList);
     }
 
-    public static List<Player> createPlayers() {
+    @Override
+    public List<Player> createPlayers() {
         List<Player> players = new ArrayList<>();
         players.add(new Player("Player 1", 0));
         players.add(new Player("Player 2", 1));
         return players;
     }
 
-    private TimeBoard createTimeBoard(List<Player> players) {
+    @Override
+    protected TimeBoard createTimeBoard(List<Player> players) {
         return new TimeBoard(players);
     }
 
-    private PatchList createPatchList() {
+    @Override
+    protected PatchList createPatchList() {
         return patchListFactory.createPatchList();
-    }
-
-    public List<Player> getPlayers() {
-        return players;
-    }
-
-    public TimeBoard getTimeBoard() {
-        return timeBoard;
-    }
-
-    public PatchList getPatchList() {
-        return patchList;
     }
 
     public void setPatchListFactory(PatchListFactory patchListFactory) {

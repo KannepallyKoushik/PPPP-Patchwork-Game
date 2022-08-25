@@ -2,10 +2,10 @@ package com.patchwork.app.backend;
 
 import com.patchwork.app.backend.exceptions.GameException;
 import com.patchwork.app.backend.model.Game;
+import com.patchwork.app.backend.model.GameFactory;
 import com.patchwork.app.backend.model.Patch;
 import com.patchwork.app.backend.model.Player;
 import com.patchwork.app.testutils.AbstractGameTest;
-import com.patchwork.app.testutils.MockGameFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -17,7 +17,7 @@ import static org.junit.Assert.assertThrows;
 public class GameTest extends AbstractGameTest {
 
     private static Game makeFinishedGame() {
-        Game game = new MockGameFactory().createGame();
+        Game game = new GameFactory().createGame();
 
         game.timeBoard.movePlayer(game.players.get(0), 51);
         try {

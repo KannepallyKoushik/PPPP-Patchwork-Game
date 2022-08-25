@@ -1,8 +1,8 @@
 package com.patchwork.app.testutils;
 
-import com.patchwork.app.backend.controller.Inputs.MockGameInput;
+import com.patchwork.app.backend.controller.GameController.AbstractGameControllerFactory;
 import com.patchwork.app.backend.controller.GameController.GameController;
-import com.patchwork.app.backend.controller.GameController.GameControllerFactory;
+import com.patchwork.app.backend.controller.Inputs.MockGameInput;
 import com.patchwork.app.backend.model.Game;
 import com.patchwork.app.backend.model.GameFactory;
 import com.patchwork.app.backend.model.Patch;
@@ -14,7 +14,7 @@ import org.junit.Before;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
-public class AbstractGameTest {
+public abstract class AbstractGameTest {
 
     protected boolean autostart_game_controller = true;
 
@@ -29,7 +29,7 @@ public class AbstractGameTest {
 
     protected ByteArrayOutputStream tuiOutput;
 
-    private void createAndSetGame(GameControllerFactory gameControllerFactory) {
+    private void createAndSetGame(AbstractGameControllerFactory gameControllerFactory) {
         if (gameControllerThread != null) {
             gameController.stop();
             gameControllerThread.stop();
@@ -44,7 +44,7 @@ public class AbstractGameTest {
 
         gameControllerThread = new Thread(gameController);
 
-        if(autostart_game_controller) {
+        if (autostart_game_controller) {
             gameControllerThread.start();
         }
     }
@@ -69,7 +69,7 @@ public class AbstractGameTest {
     public void createGameWithPatchList(List<Patch> patches) {
         GameFactory gameFactory = new GameFactory();
         gameFactory.setPatchListFactory(new MockPatchListFactory(patches));
-        GameControllerFactory gameControllerFactory = new MockGameControllerFactory(gameFactory);
+        AbstractGameControllerFactory gameControllerFactory = new MockGameControllerFactory(gameFactory);
 
         createAndSetGame(gameControllerFactory);
     }
